@@ -11,7 +11,7 @@ import DeleteEvent from "./components/DeleteEvent";
 import StageEvent from "./components/StageEvent";
 import StageType from "./components/StageType";
 import LoginPage from "./page/login";
-
+import SignupPage from "./page/signup";
 
 function App() {
   return (
@@ -29,7 +29,8 @@ function App() {
         <Route path="/deleteevent" element={<DeleteEvent />} />
       </Routes> */}
 
-      <LoginPage/>
+      {/* <LoginPage/> */}
+      <SignupPage />
     </>
   );
 }
