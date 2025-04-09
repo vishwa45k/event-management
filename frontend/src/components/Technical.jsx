@@ -122,8 +122,8 @@ function TechnicalEvent() {
           headers: { "Content-Type": "application/json" },
         }
       );
-      // console.log("Event Added:", response.data);
       setDepartmentList([...DepartmentList, response.data]);
+      console.log(departmentData);
     } catch (error) {
       console.error(
         "Error adding event:",
@@ -142,13 +142,23 @@ function TechnicalEvent() {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3 p-3">
           <div>
             <label className="block fon t-medium py-3">Department Name:</label>
-            <input
-              type="text"
+            <select
               name="departmentName"
               value={newData.departmentName}
               onChange={handleData}
               className="text-sm border border-sky-500 rounded-lg w-full md:w-3/4 p-1.5"
-            />
+            >
+              <option value="" selected>Select Department</option>
+              <option value="CSE">CSE</option>
+              <option value="IT">IT</option>
+              <option value="ECE">ECE</option>
+              <option value="EEE">EEE</option>
+              <option value="Mechanical">Mechanical</option>
+              <option value="Civil">Civil</option>
+              <option value="Chemical">Chemical</option>
+              <option value="Biotech">Biotech</option>
+            </select>
+
           </div>
           <div>
             <label className="block font-medium py-3">

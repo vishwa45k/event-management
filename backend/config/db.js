@@ -1,7 +1,7 @@
 const mongoose =require("mongoose");
 const connectDB =async ()=>{
 try {
-  await mongoose.connect("mongodb://localhost:27017/");
+  await mongoose.connect("mongodb://localhost:27017/event-management-dhruva");
   console.log("db conncted");
 } catch (error) {
   console.log(error.message);
