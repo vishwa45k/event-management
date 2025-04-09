@@ -64,7 +64,6 @@ function TechnicalEvent() {
     alert("Coordinator added successfully!");
   };
 
-  // Add Student Coordinator
   const handleStudentCoordinatorChange = (e) => {
     setNewStudentCoordinator({
       ...newStudentCoordinator,

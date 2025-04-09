@@ -10,9 +10,8 @@ import DepartmentCard from "./components/DepartmentCard";
 import DeleteEvent from "./components/DeleteEvent";
 import StageEvent from "./components/StageEvent";
 import StageType from "./components/StageType";
+import LoginPage from "./page/login";
 
-//import Technical from './components/Technical'
-// import Sample from './components/Sample'
 
 function App() {
   return (
@@ -20,17 +19,17 @@ function App() {
       <Navbar />
       {/* <TechnicalEvent  /> */}
 
-      <Routes>
+      {/* <Routes>
         <Route path="/" element={<Home />} />
-        {/* <Route path="/" element={<DepartmentCard />} /> */}
         <Route path="/department/:name" element={<DepartmentEvents />} />
         <Route path="/department/:eventType" element={<StageType />} />
         <Route path="/technical" element={<Technical />} />
-
         <Route path="/sports" element={<Sample />} />
         <Route path="/stage" element={<Stage />} />
         <Route path="/deleteevent" element={<DeleteEvent />} />
-      </Routes>
+      </Routes> */}
+
+      <LoginPage/>
     </>
   );
 }
