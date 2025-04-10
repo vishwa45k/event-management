@@ -59,7 +59,8 @@ const SignupPage = () => {
           password: "",
           role: "",
         });
-        navigate("/");
+        
+        navigate("/login");
       } catch (error) {
         console.log("Error:", error.message);
 

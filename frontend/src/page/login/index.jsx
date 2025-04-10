@@ -1,9 +1,11 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import { UserContext } from "../../context/UserContext";
 
 const LoginPage = () => {
+  const { login } = useContext(UserContext);
   const navigate = useNavigate();
   const [form, setForm] = useState({
     email: "",
@@ -59,7 +61,9 @@ const LoginPage = () => {
         "http://localhost:8000/api/signin",
         form
       );
-      navigate("/");
+      login(response.data);
+
+
       console.log(response.data);
     } catch (error) {
       console.log(error.message);
@@ -137,7 +141,7 @@ const LoginPage = () => {
 
           <p className="text-center text-sm text-gray-500 mt-4">
             Don't have an account?{" "}
-            <a href="#" className="text-blue-500 hover:underline">
+            <a href="/signup" className="text-blue-500 hover:underline">
               Sign up
             </a>
           </p>
