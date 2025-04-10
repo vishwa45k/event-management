@@ -16,7 +16,7 @@ function DepartmentCard() {
   }, []);
 
   return (
-    <div className="p-4">
+    <div className="p-4 md:px-28">
       <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 font-worksans">
         {departments.map((department, index) => (
           <div

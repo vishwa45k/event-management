@@ -6,6 +6,7 @@ const stageRoutes = require("./routes/stageroute.js");
 const router = require("./routes/routes.js");
 const app = express();
 const userRoutes = require("./routes/user.route.js");
+const eventRoute = require("./routes/events.route.js");
 
 app.use(
   cors({
@@ -29,6 +30,7 @@ app.use("/api", eventRoutes);
 app.use("/stage", stageRoutes);
 app.use("/api", router);
 app.use("/api", userRoutes);
+app.use("/api", eventRoute);
 
 const PORT = 8000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
