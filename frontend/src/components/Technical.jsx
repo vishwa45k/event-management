@@ -35,7 +35,12 @@ function TechnicalEvent() {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await axios.get("/api/events");
+        const token = localStorage.getItem("token");
+        const response = await axios.get("/api/events", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setDepartmentList(response.data);
       } catch (error) {
         console.error("Error fetching events:", error);
@@ -114,11 +119,15 @@ function TechnicalEvent() {
     };
 
     try {
+      const token = localStorage.getItem("token");
       const response = await axios.post(
         "http://localhost:8000/api/events",
         departmentData,
         {
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
       setDepartmentList([...DepartmentList, response.data]);
@@ -147,7 +156,9 @@ function TechnicalEvent() {
               onChange={handleData}
               className="text-sm border border-sky-500 rounded-lg w-full md:w-3/4 p-1.5"
             >
-              <option value="" selected>Select Department</option>
+              <option value="" selected>
+                Select Department
+              </option>
               <option value="CSE">CSE</option>
               <option value="IT">IT</option>
               <option value="ECE">ECE</option>
@@ -157,7 +168,6 @@ function TechnicalEvent() {
               <option value="Chemical">Chemical</option>
               <option value="Biotech">Biotech</option>
             </select>
-
           </div>
           <div>
             <label className="block font-medium py-3">

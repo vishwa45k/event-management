@@ -7,7 +7,11 @@ const router = require("./routes/routes.js");
 const app = express();
 const userRoutes = require("./routes/user.route.js");
 const eventRoute = require("./routes/events.route.js");
+const dotenv = require("dotenv");
+const authicateUser = require("./middleware/auth.middleware.js");
+const authenticateUser = require("./middleware/auth.middleware.js");
 
+dotenv.config();
 app.use(
   cors({
     origin: "http://localhost:5173",
@@ -30,7 +34,7 @@ app.use("/api", eventRoutes);
 app.use("/stage", stageRoutes);
 app.use("/api", router);
 app.use("/api", userRoutes);
-app.use("/api", eventRoute);
+app.use("/api", authenticateUser, eventRoute);
 
 const PORT = 8000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

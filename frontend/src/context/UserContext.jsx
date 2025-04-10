@@ -10,15 +10,18 @@ const UserProvider = ({ children }) => {
 
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
-    if (storedUser) {
+    const token = localStorage.getItem("token");
+    if (storedUser && token) {
       setUser(storedUser);
       setIsLogin(true);
+      
     }
   }, []);
 
   const login = (userData) => {
     setUser(userData);
     localStorage.setItem("user", JSON.stringify(userData.user));
+    localStorage.setItem("token", userData.token);
     navigate("/");
     setIsLogin(true);
   };
@@ -26,6 +29,7 @@ const UserProvider = ({ children }) => {
   const logout = () => {
     setUser(null);
     localStorage.removeItem("user");
+    localStorage.removeItem("token");
     navigate("/login");
     setIsLogin(false);
   };

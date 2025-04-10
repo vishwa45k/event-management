@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 function DepartmentEvents() {
   const { name } = useParams();
@@ -18,6 +19,8 @@ function DepartmentEvents() {
       const response = await axios.get(
         `http://localhost:8000/api/events?department=${name}`
       );
+      console.log(`http://localhost:8000/api/events?department=${name}`);
+
       setEvents(response.data);
     } catch (error) {
       console.error("Error fetching events:", error);
@@ -55,13 +58,25 @@ function DepartmentEvents() {
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
+      const token = localStorage.getItem("token");
       await axios.put(
         `http://localhost:8000/api/events/${formData._id}`,
-        formData
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token.token}`,
+          },
+        }
       );
       console.log(formData._id);
+
       setEditingEvent(null);
       fetchEvents();
+      Swal.fire({
+        icon: "success",
+        title: "event updated",
+        timer: 2000,
+      });
     } catch (error) {
       console.error("Error updating event:", error);
     }
@@ -70,10 +85,25 @@ function DepartmentEvents() {
   const handleDelete = async (e, id) => {
     e.preventDefault();
     try {
-      await axios.delete(`http://localhost:8000/api/events/${id}`);
+      const token = localStorage.getItem("token");
+      console.log(token);
+      await axios.delete(`http://localhost:8000/api/events/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       fetchEvents();
+      Swal.fire({
+        icon: "success",
+        title: "event removed",
+        timer: 2000,
+      });
     } catch (error) {
       console.error("Error deleting event:", error);
+      Swal.fire({
+        icon: "error",
+        title: "error Occurred",
+      });
     }
   };
 
