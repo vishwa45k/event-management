@@ -91,6 +91,7 @@ router.get("/events", async (req, res) => {
     res.status(500).json({ error: "Error fetching events" });
   }
 });
+
 router.delete("/event", async (req, res) => {
   try {
     const { departmentName, eventName } = req.body;
