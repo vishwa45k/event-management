@@ -7,24 +7,33 @@ const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isLogin, setIsLogin] = useState(false);
   const navigate = useNavigate();
-  useEffect(() => {});
+
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    if (storedUser) {
+      setUser(storedUser);
+      setIsLogin(true);
+    }
+  }, []);
 
   const login = (userData) => {
     setUser(userData);
+    localStorage.setItem("user", JSON.stringify(userData.user));
     navigate("/");
     setIsLogin(true);
   };
+
   const logout = () => {
     setUser(null);
-    navigate("/logout");
+    localStorage.removeItem("user");
+    navigate("/login");
     setIsLogin(false);
   };
+
   return (
-    <>
-      <UserContext.Provider value={{ login, user, logout, isLogin }}>
-        {children}
-      </UserContext.Provider>
-    </>
+    <UserContext.Provider value={{ login, logout, user, isLogin }}>
+      {children}
+    </UserContext.Provider>
   );
 };
 
