@@ -33,11 +33,11 @@ function App() {
 
 const Home = () => {
   const storedUser = JSON.parse(localStorage.getItem("user"));
-  console.log(storedUser.name); 
+  // console.log(storedUser.name); 
 
   return (
     <div className="text-center text-xl">
-      Welcome {storedUser?.name || "Guest"}
+      {/* Welcome {storedUser?.name || "Guest"} */}
       <DepartmentCard />
       <StageEvent />
     </div>

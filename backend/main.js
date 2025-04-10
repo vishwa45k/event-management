@@ -33,7 +33,7 @@ connectDB();
 
 app.use("/api", eventRoutes);
 app.use("/stage", stageRoutes);
-app.use("/api", authenticateUser, router);
+app.use("/api", router);
 app.use("/api", userRoutes);
 app.use("/api", authenticateUser, authorizeRoles("staff"), eventRoute);
 
