@@ -1,8 +1,10 @@
 import axios from "axios";
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
 const LoginPage = () => {
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -53,7 +55,11 @@ const LoginPage = () => {
     }
 
     try {
-      const response = await axios.post("", form);
+      const response = await axios.post(
+        "http://localhost:8000/api/signin",
+        form
+      );
+      navigate("/");
       console.log(response.data);
     } catch (error) {
       console.log(error.message);

@@ -1,29 +1,34 @@
+import axios from "axios";
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const SignupPage = () => {
+  // Form state
   const [form, setForm] = useState({
-    username: "",
+    name: "",
     email: "",
     password: "",
     role: "",
   });
 
+  // Error state
   const [errors, setErrors] = useState({});
+  const navigate = useNavigate();
 
+  // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
-
-    setForm({ ...form, [name]: value });
-
-    // Clear error as user types
-    setErrors({ ...errors, [name]: "" });
+    setForm({ ...form, [name]: value }); // update form data
+    setErrors({ ...errors, [name]: "" }); // clear error on input
   };
 
+  // Validation function
   const validate = () => {
     const newErrors = {};
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    if (!form.username.trim()) newErrors.username = "Username is required";
+    if (!form.name.trim()) newErrors.name = "Name is required";
     if (!form.email.trim()) newErrors.email = "Email is required";
     else if (!emailRegex.test(form.email))
       newErrors.email = "Invalid email format";
@@ -36,12 +41,44 @@ const SignupPage = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (validate()) {
       console.log("Signup Data:", form);
-      // Add signup API call here
+      try {
+        const response = await axios.post(
+          "http://localhost:8000/api/register",
+          form
+        );
+        console.log(response.data);
+        console.log("User signed up successfully");
+        setForm({
+          name: "",
+          email: "",
+          password: "",
+          role: "",
+        });
+        navigate("/");
+      } catch (error) {
+        console.log("Error:", error.message);
+
+        if (errorsteve1234.response && error.response.status === 409) {
+          Swal.fire({
+            icon: "error",
+            title: "Error Occurred",
+            text: "user already exists",
+            timer: 2000,
+          });
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "Something went wrong",
+            text: error.message,
+            timer: 2000,
+          });
+        }
+      }
     }
   };
 
@@ -49,33 +86,29 @@ const SignupPage = () => {
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
       <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8">
         <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
-          Create Your Account
+          Sign up
         </h2>
 
         <form className="space-y-5" onSubmit={handleSubmit}>
-          {/* Username */}
           <div>
-            <label
-              className="block text-gray-600 text-sm mb-1"
-              htmlFor="username"
-            >
-              Username
+            <label className="block text-gray-600 text-sm mb-1" htmlFor="name">
+              Name
             </label>
             <input
               type="text"
-              id="username"
-              name="username"
-              value={form.username}
+              id="name"
+              name="name"
+              value={form.name}
               onChange={handleChange}
               className={`w-full px-4 py-2 border rounded-xl focus:outline-none focus:ring-2 ${
-                errors.username
+                errors.name
                   ? "border-red-500 focus:ring-red-400"
                   : "focus:ring-blue-400"
               }`}
               placeholder="Your name"
             />
-            {errors.username && (
-              <p className="text-red-500 text-sm mt-1">{errors.username}</p>
+            {errors.name && (
+              <p className="text-red-500 text-sm mt-1">{errors.name}</p>
             )}
           </div>
 
@@ -102,7 +135,6 @@ const SignupPage = () => {
             )}
           </div>
 
-          {/* Role */}
           <div>
             <label className="block text-gray-600 text-sm mb-1" htmlFor="role">
               Role
@@ -127,7 +159,6 @@ const SignupPage = () => {
             )}
           </div>
 
-          {/* Password */}
           <div>
             <label
               className="block text-gray-600 text-sm mb-1"
@@ -153,7 +184,6 @@ const SignupPage = () => {
             )}
           </div>
 
-          {/* Submit Button */}
           <button
             type="submit"
             className="w-full bg-green-500 text-white py-2 rounded-xl hover:bg-green-600 transition duration-200"
@@ -161,6 +191,7 @@ const SignupPage = () => {
             Sign Up
           </button>
 
+          {/* Login Link */}
           <p className="text-center text-sm text-gray-500 mt-4">
             Already have an account?{" "}
             <a href="#" className="text-blue-500 hover:underline">

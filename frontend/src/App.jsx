@@ -19,7 +19,9 @@ function App() {
       <Navbar />
       {/* <TechnicalEvent  /> */}
 
-      {/* <Routes>
+      <Routes>
+        <Route path="/login" element={<LoginPage />}></Route>
+        <Route path="/signup" element={<SignupPage />}></Route>
         <Route path="/" element={<Home />} />
         <Route path="/department/:name" element={<DepartmentEvents />} />
         <Route path="/department/:eventType" element={<StageType />} />
@@ -27,10 +29,9 @@ function App() {
         <Route path="/sports" element={<Sample />} />
         <Route path="/stage" element={<Stage />} />
         <Route path="/deleteevent" element={<DeleteEvent />} />
-      </Routes> */}
+      </Routes>
 
-      {/* <LoginPage/> */}
-      <SignupPage />
+      {/* <SignupPage /> */}
     </>
   );
 }
