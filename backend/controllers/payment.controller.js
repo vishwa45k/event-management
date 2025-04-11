@@ -1,4 +1,4 @@
-const razorPay = require("../utils/razorpay.util");
+const razorPay = require("../utils/razorpay.util.js");
 
 const createOrder = async (req, res, next) => {
   try {

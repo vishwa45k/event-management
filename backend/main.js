@@ -7,12 +7,12 @@ const router = require("./routes/routes.js");
 const app = express();
 const userRoutes = require("./routes/user.route.js");
 const eventRoute = require("./routes/events.route.js");
-const dotenv = require("dotenv");
+const paymentRoute = require("./routes/payment.route.js");
 const {
   authenticateUser,
   authorizeRoles,
 } = require("./middleware/auth.middleware.js");
-dotenv.config();
+require("dotenv").config();
 app.use(
   cors({
     origin: "http://localhost:5173",
@@ -30,7 +30,7 @@ app.get("/", (req, res) => {
 });
 
 connectDB();
-
+app.use("/api", paymentRoute);
 app.use("/api", eventRoutes);
 app.use("/stage", stageRoutes);
 app.use("/api", router);
