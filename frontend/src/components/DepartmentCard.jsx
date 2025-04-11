@@ -5,7 +5,7 @@ import axios from "axios";
 function DepartmentCard() {
   const [departments, setDepartments] = useState([]);
   const navigate = useNavigate();
-  
+
   useEffect(() => {
     axios
       .get("http://localhost:8000/api/departments")
@@ -14,23 +14,21 @@ function DepartmentCard() {
       })
       .catch((error) => console.error("Error fetching departments:", error));
   }, []);
-  
 
   return (
-    <>
-      <div className="grid grid-cols-3 gap-4 mt-5 font-worksans text-lg">
+    <div className="p-4 md:px-28">
+      <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 font-worksans">
         {departments.map((department, index) => (
           <div
             key={index}
-            className="p-5 bg-blue-500 text-white rounded-lg cursor-pointer"
             onClick={() => navigate(`/department/${department.departmentName}`)}
+            className="flex items-center justify-center h-32 bg-sky-400 text-white font-semibold text-lg rounded-xl shadow-md hover:bg-sky-500 transition-all duration-200 cursor-pointer text-center"
           >
-            {department.departmentName}{" "}
-            {/* ✅ Ensure you're displaying a string */}
+            {department.departmentName}
           </div>
         ))}
       </div>
-    </>
+    </div>
   );
 }
 

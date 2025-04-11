@@ -1,6 +1,7 @@
 const express = require("express");
 const Event = require("../models/models.js");
 const router = express.Router();
+
 router.post("/events", async (req, res) => {
   try {
     const {
@@ -17,23 +18,24 @@ router.post("/events", async (req, res) => {
       time,
       price,
       rules,
+      coordinators,
+      studentCoordinators,
     } = req.body;
 
     if (
-      !departmentName ||
-      !eventName ||
-      !url ||
-      !description ||
-      !numTechnicalEvents ||
-      !numNonTechnicalEvents ||
-      !numWorkshops ||
-      !type ||
-      !eventLocation ||
-      !date ||
-      !time ||
-      !price
+      departmentName == null ||
+      eventName == null ||
+      url == null ||
+      description == null ||
+      numTechnicalEvents == null ||
+      numNonTechnicalEvents == null ||
+      numWorkshops == null ||
+      type == null ||
+      eventLocation == null ||
+      date == null ||
+      time == null ||
+      price == null
     ) {
-      console.log({ error: "All fields are required" });
       return res.status(400).json({ error: "All fields are required" });
     }
 
@@ -51,16 +53,16 @@ router.post("/events", async (req, res) => {
       time,
       price,
       rules,
+      coordinators,
+      studentCoordinators,
     });
 
-    // ✅ Save to DB
     await event.save();
     res.status(201).json(event);
   } catch (error) {
     console.error("Error while creating event:", error);
     res.status(500).json({ error: error.message });
   }
-  // res.send("hello ");
 });
 
 router.get("/departments", async (req, res) => {
@@ -72,19 +74,11 @@ router.get("/departments", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-// router.get("/events", async (req, res) => {
-//   try {
-//     const { department } = req.query;
-//     const events = await Event.find({ departmentName: department });
-//     res.json(events);
-//   } catch (error) {
-//     res.status(500).json({ error: "Error fetching events" });
-//   }
-// });
+
 router.get("/events", async (req, res) => {
   try {
     const { department } = req.query;
-    console.log("Department query param:", department); // Debugging log
+    console.log("Department query param:", department);
 
     if (!department) {
       return res.status(400).json({ error: "Department is required" });
@@ -93,10 +87,11 @@ router.get("/events", async (req, res) => {
     const events = await Event.find({ departmentName: department });
     res.json(events);
   } catch (error) {
-    console.error("Error fetching events:", error); // Additional logging
+    console.error("Error fetching events:", error);
     res.status(500).json({ error: "Error fetching events" });
   }
 });
+
 router.delete("/event", async (req, res) => {
   try {
     const { departmentName, eventName } = req.body;
@@ -126,4 +121,3 @@ router.delete("/event", async (req, res) => {
 });
 
 module.exports = router;
-
