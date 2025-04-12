@@ -33,9 +33,9 @@ connectDB();
 app.use("/api", paymentRoute);
 app.use("/api", eventRoutes);
 app.use("/stage", stageRoutes);
-app.use("/api", router);
+// app.use("/api", router);
 app.use("/api", userRoutes);
-app.use("/api", authenticateUser, authorizeRoles("staff"), eventRoute);
-
+app.use("/api", eventRoute);
+//  authenticateUser, authorizeRoles("staff"),
 const PORT = 8000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

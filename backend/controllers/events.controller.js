@@ -1,4 +1,70 @@
+const departmentModel = require("../models/department.model");
 const Event = require("../models/models");
+
+const createDepartmentWithEvents = async (req, res) => {
+  try {
+    const {
+      id,
+      departmentName,
+      cardName,
+      shortName,
+      departmentDescription,
+      coordinatorName,
+      coordinatorContactPhone,
+      coordinatorEmail,
+      technicalEventCount,
+      nonTechnicalEventCount,
+      workshop,
+      events,
+    } = req.body;
+
+    if (
+      !departmentName ||
+      !description ||
+      !coordinatorName ||
+      !coordinatorContactPhone ||
+      !coordinatorEmail ||
+      !events
+    ) {
+      return res
+        .status(400)
+        .json({ error: "All required fields must be provided" });
+    }
+
+    const newDepartment = new departmentModel({
+      id,
+      departmentName,
+      cardName,
+      shortName,
+      departmentDescription,
+      coordinatorName,
+      coordinatorContactPhone,
+      coordinatorEmail,
+      technicalEventCount,
+      nonTechnicalEventCount,
+      workshop,
+      events,
+    });
+
+    const savedDepartment = await newDepartment.save();
+    res.status(201).json(savedDepartment);
+  } catch (error) {
+    console.error("Error saving department data:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+const getEvents = async (req, res) => {
+  try {
+    const deparment = await departmentModel.find();
+    if (deparment.length === 0) {
+      return res.status(200).json({ message: "No Department Avaiable" });
+    }
+    return res.status(200).json(deparment);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
 
 const updateEvent = async (req, res) => {
   const { id } = req.params;
@@ -30,4 +96,9 @@ const deleteEventById = async (req, res) => {
   }
 };
 
-module.exports = { updateEvent, deleteEventById };
+module.exports = {
+  updateEvent,
+  deleteEventById,
+  getEvents,
+  createDepartmentWithEvents,
+};
