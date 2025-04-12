@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+
 const coordinatorSchema = new mongoose.Schema({
   name: String,
   contact: String,
@@ -24,17 +25,10 @@ const eventSchema = new mongoose.Schema({
 });
 
 const departmentSchema = new mongoose.Schema({
-  id: Number,
   departmentName: String,
-  cardName: String,
-  shortName: String,
-  departmentDescription: String,
   coordinatorName: String,
   coordinatorContactPhone: String,
   coordinatorEmail: String,
-  technicalEventCount: Number,
-  nonTechnicalEventCount: Number,
-  workshop: Number,
   events: [eventSchema],
 });
 

@@ -17,11 +17,11 @@ function DepartmentEvents() {
   const fetchEvents = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:8000/api/events?department=${name}`
+        `http://localhost:8000/api/events/${name}`
       );
-      console.log(`http://localhost:8000/api/events?department=${name}`);
+      console.log(response.data.department.events);
 
-      setEvents(response.data);
+      setEvents(response.data.department.events);
     } catch (error) {
       console.error("Error fetching events:", error);
     }
@@ -58,16 +58,12 @@ function DepartmentEvents() {
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
-      const token = localStorage.getItem("token");
       await axios.put(
         `http://localhost:8000/api/events/${formData._id}`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token.token}`,
-          },
-        }
+        formData
       );
+      console.log(`http://localhost:8000/api/events/${formData._id}`);
+      console.log(formData);
       console.log(formData._id);
 
       setEditingEvent(null);
@@ -85,13 +81,7 @@ function DepartmentEvents() {
   const handleDelete = async (e, id) => {
     e.preventDefault();
     try {
-      const token = localStorage.getItem("token");
-      console.log(token);
-      await axios.delete(`http://localhost:8000/api/events/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await axios.delete(`http://localhost:8000/api/events/${id}`, {});
       fetchEvents();
       Swal.fire({
         icon: "success",
@@ -119,7 +109,7 @@ function DepartmentEvents() {
               <strong>Date:</strong> {new Date(event.date).toLocaleDateString()}
             </p>
             <p>
-              <strong>Location:</strong> {event.eventLocation}
+              <strong>Location:</strong> {event.eventVenue}
             </p>
             <div className="flex space-x-2 mt-4">
               <button
@@ -158,124 +148,165 @@ function DepartmentEvents() {
               </div>
 
               <div className="col-span-2">
-                <label className="block mb-1 font-medium">Description</label>
+                <label className="block mb-1 font-medium">
+                  Event Description
+                </label>
                 <textarea
-                  name="description"
-                  value={formData.description || ""}
+                  name="eventDescription"
+                  value={formData.eventDescription || ""}
                   onChange={handleChange}
                   className="w-full border px-3 py-2 rounded"
                   rows={3}
                 />
               </div>
 
-              <div>
-                <label className="block mb-1 font-medium">Location</label>
+              <div className="col-span-2">
+                <label className="block mb-1 font-medium">Poster URL</label>
                 <input
-                  name="eventLocation"
-                  value={formData.eventLocation || ""}
-                  onChange={handleChange}
-                  className="w-full border px-3 py-2 rounded"
-                />
-              </div>
-
-              <div>
-                <label className="block mb-1 font-medium">Date</label>
-                <input
-                  name="date"
-                  type="date"
-                  value={formData.date ? formData.date.slice(0, 10) : ""}
-                  onChange={handleChange}
-                  className="w-full border px-3 py-2 rounded"
-                />
-              </div>
-
-              <div>
-                <label className="block mb-1 font-medium">Time</label>
-                <input
-                  name="time"
-                  type="time"
-                  value={formData.time || ""}
-                  onChange={handleChange}
-                  className="w-full border px-3 py-2 rounded"
-                />
-              </div>
-
-              <div>
-                <label className="block mb-1 font-medium">Price</label>
-                <input
-                  name="price"
-                  type="number"
-                  value={formData.price || ""}
-                  onChange={handleChange}
-                  className="w-full border px-3 py-2 rounded"
-                />
-              </div>
-
-              <div>
-                <label className="block mb-1 font-medium">Type</label>
-                <select
-                  name="type"
-                  value={formData.type || ""}
-                  onChange={handleChange}
-                  className="w-full border px-3 py-2 rounded"
-                >
-                  <option value="technical">Technical</option>
-                  <option value="nontechnical">Nontechnical</option>
-                  <option value="workshop">Workshop</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block mb-1 font-medium">
-                  Technical Count
-                </label>
-                <input
-                  name="technicalCount"
-                  type="number"
-                  value={formData.technicalCount || ""}
-                  onChange={handleChange}
-                  className="w-full border px-3 py-2 rounded"
-                />
-              </div>
-
-              <div>
-                <label className="block mb-1 font-medium">
-                  Nontechnical Count
-                </label>
-                <input
-                  name="NontechnicalCount"
-                  type="number"
-                  value={formData.NontechnicalCount || ""}
-                  onChange={handleChange}
-                  className="w-full border px-3 py-2 rounded"
-                />
-              </div>
-
-              <div>
-                <label className="block mb-1 font-medium">Workshop Count</label>
-                <input
-                  name="workshopCount"
-                  type="number"
-                  value={formData.workshopCount || ""}
+                  name="posterUrl"
+                  value={formData.posterUrl || ""}
                   onChange={handleChange}
                   className="w-full border px-3 py-2 rounded"
                 />
               </div>
 
               <div className="col-span-2">
-                <label className="block mb-1 font-medium">Image URL</label>
+                <label className="block mb-1 font-medium">Thumbnail URL</label>
                 <input
-                  name="url"
-                  value={formData.url || ""}
+                  name="eventThumbnail"
+                  value={formData.eventThumbnail || ""}
                   onChange={handleChange}
                   className="w-full border px-3 py-2 rounded"
                 />
               </div>
 
+              <div>
+                <label className="block mb-1 font-medium">Event Type</label>
+                <input
+                  name="eventType"
+                  value={formData.eventType || ""}
+                  onChange={handleChange}
+                  className="w-full border px-3 py-2 rounded"
+                />
+              </div>
+
+              <div>
+                <label className="block mb-1 font-medium">Event Sub-Type</label>
+                <input
+                  name="eventSubType"
+                  value={formData.eventSubType || ""}
+                  onChange={handleChange}
+                  className="w-full border px-3 py-2 rounded"
+                />
+              </div>
+
+              <div>
+                <label className="block mb-1 font-medium">Event Time</label>
+                <input
+                  name="eventTime"
+                  type="time"
+                  value={formData.eventTime || ""}
+                  onChange={handleChange}
+                  className="w-full border px-3 py-2 rounded"
+                />
+              </div>
+
+              <div>
+                <label className="block mb-1 font-medium">Venue</label>
+                <input
+                  name="eventVenue"
+                  value={formData.eventVenue || ""}
+                  onChange={handleChange}
+                  className="w-full border px-3 py-2 rounded"
+                />
+              </div>
+
+              <div className="col-span-2">
+                <label className="block mb-1 font-medium">Rounds</label>
+                {(formData.eventRounds || []).map((round, idx) => (
+                  <div key={idx} className="flex items-center mb-1">
+                    <input
+                      className="w-full border px-3 py-1 rounded"
+                      value={round}
+                      onChange={(e) => {
+                        const updated = [...formData.eventRounds];
+                        updated[idx] = e.target.value;
+                        setFormData({ ...formData, eventRounds: updated });
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const updated = [...formData.eventRounds];
+                        updated.splice(idx, 1);
+                        setFormData({ ...formData, eventRounds: updated });
+                      }}
+                      className="ml-2 text-red-500 font-bold"
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={() =>
+                    setFormData({
+                      ...formData,
+                      eventRounds: [...(formData.eventRounds || []), ""],
+                    })
+                  }
+                  className="mt-1 text-blue-600"
+                >
+                  + Add Round
+                </button>
+              </div>
+
+              {/* Prizes Input */}
+              <div className="col-span-2">
+                <label className="block mb-1 font-medium">Prizes</label>
+                {(formData.eventPrize || []).map((prize, idx) => (
+                  <div key={idx} className="flex items-center mb-1">
+                    <input
+                      className="w-full border px-3 py-1 rounded"
+                      value={prize}
+                      onChange={(e) => {
+                        const updated = [...formData.eventPrize];
+                        updated[idx] = e.target.value;
+                        setFormData({ ...formData, eventPrize: updated });
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const updated = [...formData.eventPrize];
+                        updated.splice(idx, 1);
+                        setFormData({ ...formData, eventPrize: updated });
+                      }}
+                      className="ml-2 text-red-500 font-bold"
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={() =>
+                    setFormData({
+                      ...formData,
+                      eventPrize: [...(formData.eventPrize || []), ""],
+                    })
+                  }
+                  className="mt-1 text-blue-600"
+                >
+                  + Add Prize
+                </button>
+              </div>
+
+              {/* Rules Input (same as before) */}
               <div className="col-span-2">
                 <label className="block mb-1 font-medium">Rules</label>
                 <div className="flex flex-wrap gap-2 mb-2">
-                  {(formData.rules || []).map((rule, idx) => (
+                  {(formData.eventRules || []).map((rule, idx) => (
                     <span
                       key={idx}
                       className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full flex items-center gap-2"
@@ -300,6 +331,98 @@ function DepartmentEvents() {
                 />
               </div>
 
+              {/* Staff Coordinator */}
+              <div className="col-span-2">
+                <label className="block mb-1 font-medium">
+                  Staff Coordinator
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  <input
+                    name="eventStaffCoordinator.name"
+                    placeholder="Name"
+                    value={formData.eventStaffCoordinator?.name || ""}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        eventStaffCoordinator: {
+                          ...formData.eventStaffCoordinator,
+                          name: e.target.value,
+                        },
+                      })
+                    }
+                    className="border px-3 py-2 rounded"
+                  />
+                  <input
+                    name="eventStaffCoordinator.contact"
+                    placeholder="Contact"
+                    value={formData.eventStaffCoordinator?.contact || ""}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        eventStaffCoordinator: {
+                          ...formData.eventStaffCoordinator,
+                          contact: e.target.value,
+                        },
+                      })
+                    }
+                    className="border px-3 py-2 rounded"
+                  />
+                </div>
+              </div>
+
+              {/* Student Coordinators */}
+              <div className="col-span-2">
+                <label className="block mb-1 font-medium">
+                  Student Coordinators
+                </label>
+                {(formData.studentCoordinator || []).map((coord, idx) => (
+                  <div key={idx} className="grid grid-cols-2 gap-2 mb-2">
+                    <input
+                      placeholder="Name"
+                      value={coord.name}
+                      onChange={(e) => {
+                        const updated = [...formData.studentCoordinator];
+                        updated[idx].name = e.target.value;
+                        setFormData({
+                          ...formData,
+                          studentCoordinator: updated,
+                        });
+                      }}
+                      className="border px-3 py-2 rounded"
+                    />
+                    <input
+                      placeholder="Contact"
+                      value={coord.contact}
+                      onChange={(e) => {
+                        const updated = [...formData.studentCoordinator];
+                        updated[idx].contact = e.target.value;
+                        setFormData({
+                          ...formData,
+                          studentCoordinator: updated,
+                        });
+                      }}
+                      className="border px-3 py-2 rounded"
+                    />
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={() =>
+                    setFormData({
+                      ...formData,
+                      studentCoordinator: [
+                        ...(formData.studentCoordinator || []),
+                        { name: "", contact: "" },
+                      ],
+                    })
+                  }
+                  className="text-blue-600"
+                >
+                  + Add Student Coordinator
+                </button>
+              </div>
+
+              {/* Save/Cancel Buttons */}
               <div className="col-span-2 flex justify-end gap-2 mt-4">
                 <button
                   type="button"

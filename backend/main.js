@@ -31,8 +31,8 @@ app.get("/", (req, res) => {
 
 connectDB();
 app.use("/api", paymentRoute);
-app.use("/api", eventRoutes);
-app.use("/stage", stageRoutes);
+// app.use("/api", eventRoutes);
+// app.use("/stage", stageRoutes);
 // app.use("/api", router);
 app.use("/api", userRoutes);
 app.use("/api", eventRoute);

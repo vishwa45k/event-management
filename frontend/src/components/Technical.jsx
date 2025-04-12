@@ -3,7 +3,7 @@ import axios from "axios";
 
 function TechnicalEvent() {
   const [rules, setRules] = useState([]);
-  const [DepartmentList, setDepartmentList] = useState([]);
+
   const [coordinators, setCoordinators] = useState([]);
   const [studentCoordinators, setStudentCoordinators] = useState([]);
   const [newCoordinator, setNewCoordinator] = useState({
@@ -20,49 +20,43 @@ function TechnicalEvent() {
     departmentName: "",
     eventName: "",
     type: "technical",
-    numTechnicalEvents: "",
-    numNonTechnicalEvents: "",
-    numWorkshops: "",
     url: "",
-    description: "",
-    eventLocation: "",
-    date: new Date().toISOString().split("T")[0],
-    time: "",
-    price: "",
+    eventDescription: "",
+    eventVenue: "",
+    eventTime: "",
+    eventPrize: "",
+    date: new Date().getTime,
     rules: [],
   });
 
   useEffect(() => {
-    const fetchEvents = async () => {
+    const fetchDepartments = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.get("/api/events", {
+        const response = await axios.get("/api/departments", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setDepartmentList(response.data);
       } catch (error) {
-        console.error("Error fetching events:", error);
+        console.error("Error fetching departments:", error);
       }
     };
 
-    fetchEvents();
+    fetchDepartments();
   }, []);
 
-  const handleData = (e) => {
+  // Handle input changes
+  const handleData = (e) =>
     setData({ ...newData, [e.target.name]: e.target.value });
-  };
-
-  const handleCoordinatorChange = (e) => {
+  const handleCoordinatorChange = (e) =>
     setNewCoordinator({ ...newCoordinator, [e.target.name]: e.target.value });
-  };
-
-  const handleStudentCoordinatorChange = (e) => {
+  const handleStudentCoordinatorChange = (e) =>
     setNewStudentCoordinator({
       ...newStudentCoordinator,
       [e.target.name]: e.target.value,
     });
-  };
 
+  // Add coordinator
   const addCoordinator = () => {
     if (!newCoordinator.name || !newCoordinator.number)
       return alert("Enter both name and number");
@@ -70,6 +64,7 @@ function TechnicalEvent() {
     setNewCoordinator({ name: "", number: "" });
   };
 
+  // Add student coordinator
   const addStudentCoordinator = () => {
     if (!newStudentCoordinator.name || !newStudentCoordinator.number)
       return alert("Enter both name and number");
@@ -77,20 +72,19 @@ function TechnicalEvent() {
     setNewStudentCoordinator({ name: "", number: "" });
   };
 
+  // Add rule
   const addRule = () => {
     if (!newRule) return alert("Enter a rule");
     setRules([...rules, newRule]);
     setNewRule("");
   };
 
-  const addDepartment = async (e) => {
+  // Handle form submission to add an event
+  const addEvent = async (e) => {
     e.preventDefault();
-    const departmentData = {
+    const eventData = {
       ...newData,
-      numTechnicalEvents: Number(newData.numTechnicalEvents),
-      numNonTechnicalEvents: Number(newData.numNonTechnicalEvents),
-      numWorkshops: Number(newData.numWorkshops),
-      price: Number(newData.price),
+      eventPrize: Number(newData.eventPrize),
       rules,
       coordinators,
       studentCoordinators,
@@ -98,17 +92,12 @@ function TechnicalEvent() {
 
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.post(
-        "http://localhost:8000/api/add-events",
-        departmentData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      console.log(departmentData);
+      await axios.post("http://localhost:8000/api/add-events", eventData, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
       alert("Event added successfully!");
     } catch (error) {
       console.error(
@@ -124,10 +113,9 @@ function TechnicalEvent() {
       <h1 className="text-sky-500 text-3xl text-center mb-6">
         Add Technical Event
       </h1>
-
-      <form onSubmit={addDepartment} className="space-y-6">
-        {/* Event Basics */}
-        <fieldset className="border border-sky-300 rounded-lg p-4">
+      <form onSubmit={addEvent} className="space-y-6">
+        {/* Event Details */}
+        <fieldset className="border border-sky-400 rounded-lg p-4">
           <legend className="text-lg font-semibold text-sky-600 px-2">
             Event Details
           </legend>
@@ -145,10 +133,8 @@ function TechnicalEvent() {
                 <option value="IT">IT</option>
                 <option value="ECE">ECE</option>
                 <option value="EEE">EEE</option>
-                <option value="Mechanical">Mechanical</option>
+                <option value="Mech">Mech</option>
                 <option value="Civil">Civil</option>
-                <option value="Chemical">Chemical</option>
-                <option value="Biotech">Biotech</option>
               </select>
             </div>
 
@@ -192,8 +178,8 @@ function TechnicalEvent() {
               <label className="block font-medium">Description</label>
               <input
                 type="text"
-                name="description"
-                value={newData.description}
+                name="eventDescription"
+                value={newData.eventDescription}
                 onChange={handleData}
                 className="w-full border border-sky-500 rounded p-2 text-sm"
               />
@@ -203,8 +189,8 @@ function TechnicalEvent() {
               <label className="block font-medium">Event Location</label>
               <input
                 type="text"
-                name="eventLocation"
-                value={newData.eventLocation}
+                name="eventVenue"
+                value={newData.eventVenue}
                 onChange={handleData}
                 className="w-full border border-sky-500 rounded p-2 text-sm"
               />
@@ -225,8 +211,8 @@ function TechnicalEvent() {
               <label className="block font-medium">Time</label>
               <input
                 type="time"
-                name="time"
-                value={newData.time}
+                name="eventTime"
+                value={newData.eventTime}
                 onChange={handleData}
                 className="w-full border border-sky-500 rounded p-2 text-sm"
               />
@@ -236,8 +222,8 @@ function TechnicalEvent() {
               <label className="block font-medium">Price (₹)</label>
               <input
                 type="number"
-                name="price"
-                value={newData.price}
+                name="eventPrize"
+                value={newData.eventPrize}
                 onChange={handleData}
                 className="w-full border border-sky-500 rounded p-2 text-sm"
               />
@@ -245,49 +231,8 @@ function TechnicalEvent() {
           </div>
         </fieldset>
 
-        {/* Event Counts */}
-        <fieldset className="border border-sky-300 rounded-lg p-4">
-          <legend className="text-lg font-semibold text-sky-600 px-2">
-            Event Counts
-          </legend>
-          <div className="grid md:grid-cols-3 gap-4 mt-4">
-            <div>
-              <label className="block font-medium">Technical Events</label>
-              <input
-                type="number"
-                name="numTechnicalEvents"
-                value={newData.numTechnicalEvents}
-                onChange={handleData}
-                className="w-full border border-sky-500 rounded p-2 text-sm"
-              />
-            </div>
-
-            <div>
-              <label className="block font-medium">Non-Technical Events</label>
-              <input
-                type="number"
-                name="numNonTechnicalEvents"
-                value={newData.numNonTechnicalEvents}
-                onChange={handleData}
-                className="w-full border border-sky-500 rounded p-2 text-sm"
-              />
-            </div>
-
-            <div>
-              <label className="block font-medium">Workshops</label>
-              <input
-                type="number"
-                name="numWorkshops"
-                value={newData.numWorkshops}
-                onChange={handleData}
-                className="w-full border border-sky-500 rounded p-2 text-sm"
-              />
-            </div>
-          </div>
-        </fieldset>
-
-        {/* Rules */}
-        <fieldset className="border border-sky-300 rounded-lg p-4">
+        {/* Event Rules */}
+        <fieldset className="border border-sky-400 rounded-lg p-4">
           <legend className="text-lg font-semibold text-sky-600 px-2">
             Event Rules
           </legend>
@@ -315,32 +260,27 @@ function TechnicalEvent() {
         </fieldset>
 
         {/* Coordinators */}
-        <fieldset className="border border-sky-300 rounded-lg p-4">
+        <fieldset className="border border-sky-400 rounded-lg p-4">
           <legend className="text-lg font-semibold text-sky-600 px-2">
             Coordinators
           </legend>
-
           <div className="grid md:grid-cols-2 gap-4">
-            <div>
-              <input
-                type="text"
-                name="name"
-                value={newCoordinator.name}
-                onChange={handleCoordinatorChange}
-                placeholder="Coordinator Name"
-                className="w-full border border-sky-500 p-2 rounded text-sm"
-              />
-            </div>
-            <div>
-              <input
-                type="text"
-                name="number"
-                value={newCoordinator.number}
-                onChange={handleCoordinatorChange}
-                placeholder="Coordinator Number"
-                className="w-full border border-sky-500 p-2 rounded text-sm"
-              />
-            </div>
+            <input
+              type="text"
+              name="name"
+              value={newCoordinator.name}
+              onChange={handleCoordinatorChange}
+              placeholder="Coordinator Name"
+              className="w-full border border-sky-500 p-2 rounded text-sm"
+            />
+            <input
+              type="text"
+              name="number"
+              value={newCoordinator.number}
+              onChange={handleCoordinatorChange}
+              placeholder="Coordinator Number"
+              className="w-full border border-sky-500 p-2 rounded text-sm"
+            />
           </div>
           <button
             type="button"
@@ -352,32 +292,27 @@ function TechnicalEvent() {
         </fieldset>
 
         {/* Student Coordinators */}
-        <fieldset className="border border-sky-300 rounded-lg p-4">
+        <fieldset className="border border-sky-400 rounded-lg p-4">
           <legend className="text-lg font-semibold text-sky-600 px-2">
             Student Coordinators
           </legend>
-
           <div className="grid md:grid-cols-2 gap-4">
-            <div>
-              <input
-                type="text"
-                name="name"
-                value={newStudentCoordinator.name}
-                onChange={handleStudentCoordinatorChange}
-                placeholder="Student Coordinator Name"
-                className="w-full border border-sky-500 p-2 rounded text-sm"
-              />
-            </div>
-            <div>
-              <input
-                type="text"
-                name="number"
-                value={newStudentCoordinator.number}
-                onChange={handleStudentCoordinatorChange}
-                placeholder="Student Coordinator Number"
-                className="w-full border border-sky-500 p-2 rounded text-sm"
-              />
-            </div>
+            <input
+              type="text"
+              name="name"
+              value={newStudentCoordinator.name}
+              onChange={handleStudentCoordinatorChange}
+              placeholder="Student Coordinator Name"
+              className="w-full border border-sky-500 p-2 rounded text-sm"
+            />
+            <input
+              type="text"
+              name="number"
+              value={newStudentCoordinator.number}
+              onChange={handleStudentCoordinatorChange}
+              placeholder="Student Coordinator Number"
+              className="w-full border border-sky-500 p-2 rounded text-sm"
+            />
           </div>
           <button
             type="button"
@@ -388,7 +323,7 @@ function TechnicalEvent() {
           </button>
         </fieldset>
 
-        {/* Submit */}
+        {/* Submit Button */}
         <button
           type="submit"
           className="bg-sky-600 hover:bg-sky-700 text-white py-3 px-6 rounded text-lg mt-4 w-full md:w-1/3 mx-auto block"

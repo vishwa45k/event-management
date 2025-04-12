@@ -8,7 +8,7 @@ function DepartmentCard() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:8000/api/departments")
+      .get("http://localhost:8000/api/get-events")
       .then((response) => {
         setDepartments(response.data);
       })

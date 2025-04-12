@@ -4,56 +4,48 @@ const Event = require("../models/models");
 const createDepartmentWithEvents = async (req, res) => {
   try {
     const {
-      id,
       departmentName,
-      cardName,
-      shortName,
-      departmentDescription,
-      coordinatorName,
-      coordinatorContactPhone,
-      coordinatorEmail,
-      technicalEventCount,
-      nonTechnicalEventCount,
-      workshop,
-      events,
+      eventName,
+      eventDescription,
+      eventPrize,
+      eventTime,
+      eventVenue,
+      rules,
+      coordinators,
+      studentCoordinators,
+      date,
     } = req.body;
 
-    if (
-      !departmentName ||
-      !description ||
-      !coordinatorName ||
-      !coordinatorContactPhone ||
-      !coordinatorEmail ||
-      !events
-    ) {
-      return res
-        .status(400)
-        .json({ error: "All required fields must be provided" });
+    const newEvent = {
+      eventName,
+      eventDescription,
+      eventPrize,
+      eventTime,
+      eventVenue,
+      eventRules: rules,
+      eventStaffCoordinator: coordinators,
+      studentCoordinator: studentCoordinators,
+      date,
+    };
+
+    var department = await departmentModel.findOne({ departmentName });
+    if (!department) {
+      department = new departmentModel({
+        departmentName,
+        events: [newEvent],
+      });
+    } else {
+      department.events.push(newEvent);
     }
 
-    const newDepartment = new departmentModel({
-      id,
-      departmentName,
-      cardName,
-      shortName,
-      departmentDescription,
-      coordinatorName,
-      coordinatorContactPhone,
-      coordinatorEmail,
-      technicalEventCount,
-      nonTechnicalEventCount,
-      workshop,
-      events,
-    });
+    await department.save();
 
-    const savedDepartment = await newDepartment.save();
-    res.status(201).json(savedDepartment);
+    res.status(201).json(department);
   } catch (error) {
     console.error("Error saving department data:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
-
 const getEvents = async (req, res) => {
   try {
     const deparment = await departmentModel.find();
@@ -68,35 +60,78 @@ const getEvents = async (req, res) => {
 
 const updateEvent = async (req, res) => {
   const { id } = req.params;
+  const updatedEventData = req.body;
 
-  console.log(req.params);
   try {
-    const event = await Event.findOne({ _id: id });
-    if (!event) {
-      return res.status(404).json({ message: "event not found" });
+    const department = await departmentModel.findOne({ "events._id": id });
+    if (!department) {
+      return res
+        .status(404)
+        .json({ message: "Event not found in any department" });
     }
-    await Event.findOneAndUpdate({ _id: id }, req.body);
-    return res.status(200).json({ message: "course updated" });
+
+    const event = department.events.id(id);
+    if (!event) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+
+    Object.assign(event, updatedEventData);
+
+    await department.save();
+
+    return res.status(200).json({ message: "Event updated successfully" });
   } catch (error) {
+    console.error("Error updating event:", error);
     return res.status(500).json({ message: error.message });
   }
 };
 
 const deleteEventById = async (req, res) => {
   const { id } = req.params;
+
   try {
-    const events = await Event.findOne({ _id: id });
-    if (!events) {
-      return res.status(404).json({ message: "event not found" });
+    const department = await departmentModel.findOne({ "events._id": id });
+
+    if (!department) {
+      return res.status(404).json({ message: "Event not found" });
     }
-    await Event.findOneAndDelete({ _id: id });
-    return res.status(200).json({ message: "event removed successfully" });
+
+    department.events = department.events.filter(
+      (event) => event._id.toString() !== id
+    );
+
+    await department.save();
+
+    return res.status(200).json({ message: "Event removed successfully" });
   } catch (error) {
+    console.error("Error deleting event:", error);
     return res.status(500).json({ message: error.message });
   }
 };
 
+const getDepartmentEvents = async (req, res) => {
+  const { department } = req.params;
+  try {
+    const departmentFound = await departmentModel.findOne({
+      departmentName: department,
+    });
+    console.log(department ? "Found" : "Not Found");
+    if (!departmentFound) {
+      return res.status(404).json({ message: "Department not found" });
+    }
+    console.log(departmentFound);
+    return res.status(200).json({
+      message: "Department found",
+      department: departmentFound,
+    });
+  } catch (error) {
+    console.error("Error fetching department:", error);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
 module.exports = {
+  getDepartmentEvents,
   updateEvent,
   deleteEventById,
   getEvents,
