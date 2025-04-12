@@ -40,7 +40,7 @@ const createDepartmentWithEvents = async (req, res) => {
 
     await department.save();
 
-    res.status(201).json(department);
+    return res.status(201).json(department);
   } catch (error) {
     console.error("Error saving department data:", error);
     res.status(500).json({ error: "Internal Server Error" });

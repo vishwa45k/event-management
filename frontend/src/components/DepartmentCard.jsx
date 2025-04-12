@@ -7,8 +7,13 @@ function DepartmentCard() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
     axios
-      .get("http://localhost:8000/api/get-events")
+      .get("http://localhost:8000/api/get-events", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
       .then((response) => {
         setDepartments(response.data);
       })

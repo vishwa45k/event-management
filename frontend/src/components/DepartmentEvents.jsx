@@ -16,10 +16,19 @@ function DepartmentEvents() {
 
   const fetchEvents = async () => {
     try {
+      const token = localStorage.getItem("token") || null;
+      console.log("Token:", token);
+
       const response = await axios.get(
-        `http://localhost:8000/api/events/${name}`
+        `http://localhost:8000/api/events/${name}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       console.log(response.data.department.events);
+      console.log(token);
 
       setEvents(response.data.department.events);
     } catch (error) {
@@ -58,9 +67,15 @@ function DepartmentEvents() {
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
+      const token = localStorage.getItem("token");
       await axios.put(
         `http://localhost:8000/api/events/${formData._id}`,
-        formData
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       console.log(`http://localhost:8000/api/events/${formData._id}`);
       console.log(formData);
@@ -81,7 +96,13 @@ function DepartmentEvents() {
   const handleDelete = async (e, id) => {
     e.preventDefault();
     try {
-      await axios.delete(`http://localhost:8000/api/events/${id}`, {});
+      const token = localStorage.getItem("token");
+
+      await axios.delete(`http://localhost:8000/api/events/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       fetchEvents();
       Swal.fire({
         icon: "success",
@@ -106,7 +127,8 @@ function DepartmentEvents() {
             <h2 className="text-lg font-bold">{event.eventName}</h2>
             <p>{event.description}</p>
             <p>
-              <strong>Date:</strong> {new Date(event.date).toLocaleDateString()}
+              {/* <strong>Date:</strong> {event.} */}
+              {/* {JSON.stringify(event)} */}
             </p>
             <p>
               <strong>Location:</strong> {event.eventVenue}

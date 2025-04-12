@@ -16,8 +16,6 @@ require("dotenv").config();
 app.use(
   cors({
     origin: "http://localhost:5173",
-    methods: "GET,POST,PUT,DELETE",
-    allowedHeaders: "Content-Type,Authorization",
     credentials: true,
   })
 );
@@ -25,17 +23,13 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.get("/", (req, res) => {
-  res.send("<h2>Hello from Express.js server!!</h2>");
-});
-
 connectDB();
 app.use("/api", paymentRoute);
 // app.use("/api", eventRoutes);
-// app.use("/stage", stageRoutes);
+app.use("/stage", stageRoutes);
 // app.use("/api", router);
 app.use("/api", userRoutes);
-app.use("/api", eventRoute);
-//  authenticateUser, authorizeRoles("staff"),
+app.use("/api", authenticateUser,  eventRoute);
+
 const PORT = 8000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
