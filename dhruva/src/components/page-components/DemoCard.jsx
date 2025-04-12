@@ -1,3 +1,4 @@
+import department from "@/data/Departments";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import Swal from "sweetalert2";
@@ -54,9 +55,15 @@ export function DemoCard({ title, imageUrl, price }) {
         {
           amount: totalAmount,
           currency: "INR",
+          name: formData.name,
+          department: formData.department,
+          college: formData.college,
+          passCount: formData.passCount,
+          rollNo: formData.rollno,
+          cardTitle: title,
         }
       );
-
+      
       const options = {
         key: razorpayId,
         amount: data.amount,
