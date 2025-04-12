@@ -1,5 +1,6 @@
 const departmentModel = require("../models/department.model");
 const Event = require("../models/models");
+const { eventNames } = require("../schema/user.schema");
 
 const createDepartmentWithEvents = async (req, res) => {
   try {
@@ -13,19 +14,21 @@ const createDepartmentWithEvents = async (req, res) => {
       rules,
       coordinators,
       studentCoordinators,
-      date,
+
+      type,
     } = req.body;
 
     const newEvent = {
       eventName,
       eventDescription,
       eventPrize,
+      eventDescription,
       eventTime,
       eventVenue,
       eventRules: rules,
       eventStaffCoordinator: coordinators,
       studentCoordinator: studentCoordinators,
-      date,
+      eventType: type,
     };
 
     var department = await departmentModel.findOne({ departmentName });
@@ -130,7 +133,32 @@ const getDepartmentEvents = async (req, res) => {
   }
 };
 
+const getEventById = async (req, res) => {
+  const { eventId } = req.params;
+
+  try {
+    const departmentFound = await departmentModel.findOne({
+      "events._id": eventId,
+    });
+
+    if (!departmentFound) {
+      return res.status(404).json({ message: "department not found" });
+    }
+    const event = departmentFound.events.id(eventId);
+    if (!event) {
+      return res.status(404).json({ message: "event not found" });
+    }
+    return res.status(200).json({
+      message: "event found",
+      event: event,
+    });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
+  getEventById,
   getDepartmentEvents,
   updateEvent,
   deleteEventById,

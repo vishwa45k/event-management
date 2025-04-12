@@ -3,17 +3,14 @@ import EventCards from "@/components/page-components/EventCards.jsx";
 import "../../assets/fonts/opensans.css";
 
 function EventShowOff({ events }) {
-  const workshops = events.filter((event) => event.eventSubType === "WorkShop");
-  const technical = events.filter(
-    (event) => event.eventSubType === "Technical"
-  );
+  const workshops = events.filter((event) => event.eventType === "workshop");
+  const technical = events.filter((event) => event.eventType === "technical");
   const nonTechnical = events.filter(
-    (event) => event.eventSubType === "NonTechnical"
+    (event) => event.eventType === "non-technical"
   );
 
   return (
     <>
-   
       <>
         {workshops.length > 0 ? (
           <>

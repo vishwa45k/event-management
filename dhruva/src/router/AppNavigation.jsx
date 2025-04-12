@@ -29,7 +29,7 @@ function AppNavigation() {
         <Route path="/technicalFest/*" element={<TechnicalFest />}></Route>
         <Route path="/technicalFest/:departmentName" element={<EventPage />} />
         <Route path="/departmentInfo" element={<EventPage />}></Route>
-        <Route path="/eventInfo" element={<EventShowPage />}></Route>
+        <Route path="/eventInfo/:eventId" element={<EventShowPage />}></Route>
         <Route path="/sports" element={<SportsPage />}></Route>
         <Route path="/sports/:sportTitle" element={<SportsInfo />}></Route>
         <Route path="/live" element={<LiveinConcert />}></Route>

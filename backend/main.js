@@ -29,7 +29,7 @@ app.use("/api", paymentRoute);
 app.use("/stage", stageRoutes);
 // app.use("/api", router);
 app.use("/api", userRoutes);
-app.use("/api", authenticateUser,  eventRoute);
+app.use("/api", eventRoute);
 
 const PORT = 8000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

@@ -1,38 +1,35 @@
-import  { useEffect } from "react";
-import {
-  MapPin,
-  Clock,
-  Link,
-  Rocket,
-  
-  Check,
-  MoveRight,
-} from "lucide-react";
+import { useEffect, useState } from "react";
+import { MapPin, Clock, Link, Rocket, Check, MoveRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import "../../assets/fonts/dmserif.css";
 import "../../assets/fonts/opensans.css";
 import "../../assets/fonts/sourcesans.css";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import CoordinatorCard from "@/components/page-components/CoordinatorCard";
 import backgroundGif from "../../assets/gif/card-background.webp";
+import axios from "axios";
 
 function EventShowPage() {
+  const navigate = useNavigate();
+  const { eventId } = useParams();
+  console.log(eventId);
+  const [data, setData] = useState(null);
   useEffect(() => {
     window.scrollTo(0, 0);
+
+    fetchDepartmentData();
   }, []);
-
-  const location = useLocation();
-  const events = location.state || {};
-  const data = events.events || {};
-  const navigate = useNavigate();
-  const eventTopics=data.eventTopics||[];
-  const eventHighlights = data.eventHighlights || [];
-  const eventRounds = data.eventRounds || [];
-  const eventPrize = data.eventPrize || [];
-  const eventRules = data.eventRules || [];
-  const studentCoordinator = data.studentCoordinator || [];
-  const eventLink = data.eventLink || [];
-
+  const fetchDepartmentData = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8000/api/get-events/${eventId}`
+      );
+      console.log(`http://localhost:8000/api/get-events/${eventId}`);
+      setData(response.data.event);
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
   if (!data || Object.keys(data).length === 0) {
     return (
       <div className="text-center text-gray-700">
@@ -44,6 +41,7 @@ function EventShowPage() {
   const handleRegister = () => {
     navigate("/registration", { state: { event: data } });
   };
+  console.log(data);
 
   return (
     <div
@@ -96,26 +94,14 @@ function EventShowPage() {
               <span>{data.eventVenue}</span>
             </div>
           </div>
-          {eventLink && eventLink.length > 0 ? (
-              <>
-                <h4 className="text-yellow-400"></h4>
-                <ul className="list-disc list-inside mt-2">
-                  <div className="flex justify-center items-center gap-2">
-                    <Link className="w-5 h-5 text-green-500" />
-                    <a className="underline" href={eventLink} target="_blank" rel="noreferrer">{eventLink}</a>
-                  </div>
-                </ul>
-              </>
-            ) : null}
         </div>
-        
+
         <div className="p-4 dm-sans lg:ms-7 text-gray-800 text-lg">
-          
-          {eventRules.length !== 0 && (
+          {data.eventRules.length !== 0 && (
             <>
               <h4 className="text-yellow-400">Event Rules</h4>
               <ul className="list-disc list-inside mt-2">
-                {eventRules.map((rule, idx) => (
+                {data.eventRules.map((rule, idx) => (
                   <li key={idx} className="list-none dm-sans flex">
                     <Check className="text-green-500" />
                     {rule}
@@ -124,39 +110,12 @@ function EventShowPage() {
               </ul>
             </>
           )}
-          {eventTopics.length !== 0 && (
-            <>
-              <h4 className="text-yellow-400">Event Topics</h4>
-              <ul className="list-disc list-inside mt-2">
-                {eventTopics.map((topic, idx) => (
-                  <li key={idx} className="list-none dm-sans flex">
-                    <Check className="text-green-500" />
-                    {topic}
-                  </li>
-                ))}
-              </ul>
-            </>
-          )}
-          {eventHighlights.length !== 0 && (
-            <>
-              <h4 className="text-yellow-400">Event Highlights</h4>
-              <ul className="list-disc list-inside mt-2">
-                {eventHighlights.map((topic, idx) => (
-                  <li key={idx} className="list-none dm-sans flex">
-                    <Check className="text-green-500" />
-                    {topic}
-                  </li>
-                ))}
-              </ul>
-            </>
-          )}
-          
 
-          {eventPrize.length !== 0 && (
+          {data.eventPrize.length !== 0 && (
             <>
               <p className="text-xl text-yellow-500">Prizes</p>
               <ul>
-                {eventPrize.map((price, index) => (
+                {data.eventPrize.map((price, index) => (
                   <div className="flex" key={index}>
                     <MoveRight className="text-green-600" />
                     <li className="ms-1" key={index}>
@@ -167,7 +126,7 @@ function EventShowPage() {
               </ul>
             </>
           )}
-          {eventRounds.length !== 0 && (
+          {data.eventRounds.length !== 0 && (
             <>
               <p className="text-xl text-yellow-500">Rounds</p>
               <ul>
@@ -195,12 +154,12 @@ function EventShowPage() {
           <span>
             <CoordinatorCard
               role="Staff Coordinator"
-              deptDetails={data.eventStaffCoordinator}
+              deptDetails={data.studentCoordinator}
             />
           </span>
         </div>
         <div className="flex flex-wrap justify-center gap-4">
-          {studentCoordinator.map((student, index) => (
+          {data.studentCoordinator.map((student, index) => (
             <div key={index} className="">
               <CoordinatorCard
                 role="Student Coordinator"

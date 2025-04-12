@@ -98,7 +98,7 @@ function TechnicalEvent() {
           Authorization: `Bearer ${token}`,
         },
       });
-      alert("Event added successfully!");
+      console.log(eventData);
     } catch (error) {
       console.error(
         "Error adding event:",
