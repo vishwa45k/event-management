@@ -9,7 +9,7 @@ import "../../assets/fonts/powergrotesk.css";
 function EventCards({ events }) {
   const navigate = useNavigate();
   const eventId = events._id;
-
+  const [date, time] = events.eventTime.split("T");
   const handleNavigate = () => {
     navigate(`/eventInfo/${eventId}`);
   };
@@ -34,7 +34,12 @@ function EventCards({ events }) {
             </p>
             <p className="text-sm flex justify-center gap-2  text-gray-700 dark:text-gray-400 mt-1 font-semibold">
               <Clock className="text-xs w-5 h-5" />
-              <span className="text-gray-800"> {events.eventTime}</span>
+              <span className="text-gray-800">
+                {" "}
+                {date}
+                {"   "}
+                {time}
+              </span>
             </p>
           </div>
         </CardContent>

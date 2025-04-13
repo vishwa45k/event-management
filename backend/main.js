@@ -8,6 +8,7 @@ const app = express();
 const userRoutes = require("./routes/user.route.js");
 const eventRoute = require("./routes/events.route.js");
 const paymentRoute = require("./routes/payment.route.js");
+const passRoute = require("./routes/pass.route.js");
 const {
   authenticateUser,
   authorizeRoles,
@@ -27,9 +28,9 @@ connectDB();
 app.use("/api", paymentRoute);
 // app.use("/api", eventRoutes);
 app.use("/stage", stageRoutes);
-// app.use("/api", router);
 app.use("/api", userRoutes);
 app.use("/api", eventRoute);
+app.use("/api", passRoute);
 
 const PORT = 8000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

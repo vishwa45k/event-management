@@ -42,6 +42,7 @@ function EventShowPage() {
     navigate("/registration", { state: { event: data } });
   };
   console.log(data);
+  const [time, date] = data.eventTime.split("T");
 
   return (
     <div
@@ -79,9 +80,9 @@ function EventShowPage() {
             )}
           </div>
 
-          <div className="mt-4 flex items-center gap-2 text-base md:text-lg text-gray-700 font-medium">
-            <Clock className="w-5 h-5 text-gray-500" />
-            <span>{data.eventTime}</span>
+          <div className="mt-4 flex items-center gap-2 text-base md:text-lg text-sky-700 font-medium">
+            <Clock className="w-5 h-5 text-black" />
+            <span>{date}</span>
           </div>
 
           <p className="mt-4 text-base dm-sans md:text-lg sm:text-justify text-gray-800 leading-relaxed text-center">
@@ -154,7 +155,7 @@ function EventShowPage() {
           <span>
             <CoordinatorCard
               role="Staff Coordinator"
-              deptDetails={data.studentCoordinator}
+              deptDetails={data.eventStaffCoordinator}
             />
           </span>
         </div>

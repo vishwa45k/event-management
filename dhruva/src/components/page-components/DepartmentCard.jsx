@@ -41,25 +41,26 @@ function DepartmentCard({ events }) {
     return null;
   };
 
-  
   let technicalCount = 0;
   let nontechnicalCount = 0;
   let workshopCount = 0;
 
   if (Array.isArray(events.events)) {
     events.events.forEach((eve) => {
-      if (eve.eventType === "technical") {
-        technicalCount += 1;
-      } else if (eve.eventType === "non-technical") {
-        nontechnicalCount += 1;
-      } else if (eve.eventType === "workshop") {
-        workshopCount += 1;
+      const type = eve.eventType?.toLowerCase();
+
+      switch (type) {
+        case "technical":
+          technicalCount++;
+          break;
+        case "non-technical":
+          nontechnicalCount++;
+          break;
+        case "workshop":
+          workshopCount++;
+          break;
       }
     });
-  } else {
-    technicalCount = events.technicalCount || 0;
-    nontechnicalCount = events.nontechnicalCount || 0;
-    workshopCount = events.workshopCount || 0;
   }
 
   return (

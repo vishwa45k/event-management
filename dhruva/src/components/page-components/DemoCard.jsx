@@ -7,7 +7,7 @@ export function DemoCard({ title, imageUrl, price }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [formData, setFormData] = useState({
-    name: "",
+    email: "",
     rollno: "",
     college: "",
     department: "",
@@ -23,79 +23,88 @@ export function DemoCard({ title, imageUrl, price }) {
     }));
   };
 
-  const loadRazorpayScript = () => {
-    return new Promise((resolve) => {
-      const script = document.createElement("script");
-      script.src = "https://checkout.razorpay.com/v1/checkout.js";
-      script.onload = () => {
-        resolve(true);
-      };
-      script.onerror = () => {
-        resolve(false);
-      };
-      document.body.appendChild(script);
-    });
-  };
+  // const loadRazorpayScript = () => {
+  //   return new Promise((resolve) => {
+  //     const script = document.createElement("script");
+  //     script.src = "https://checkout.razorpay.com/v1/checkout.js";
+  //     script.onload = () => {
+  //       resolve(true);
+  //     };
+  //     script.onerror = () => {
+  //       resolve(false);
+  //     };
+  //     document.body.appendChild(script);
+  //   });
+  // };
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     const totalAmount = formData.passCount * price;
-    const razorpayId = import.meta.env.VITE_RAZORPAY_KEY;
-    const res = await loadRazorpayScript();
-    if (!res) {
-      Swal.fire({
-        icon: "error",
-      });
-      return;
-    }
+    // const razorpayId = import.meta.env.VITE_RAZORPAY_KEY;
+    // const res = await loadRazorpayScript();
+    // if (!res) {
+    //   Swal.fire({
+    //     icon: "error",
+    //   });
+    //   return;
+    // }
+    const data = {
+      amount: totalAmount,
+      currency: "INR",
+      email: formData.email,
+      department: formData.department,
+      college: formData.college,
+      passCount: formData.passCount,
+      rollNo: formData.rollno,
+      cardTitle: title,
+    };
 
     try {
-      const { data } = await axios.post(
-        "http://localhost:8000/api/create-order",
-        {
-          amount: totalAmount,
-          currency: "INR",
-          name: formData.name,
-          department: formData.department,
-          college: formData.college,
-          passCount: formData.passCount,
-          rollNo: formData.rollno,
-          cardTitle: title,
-        }
+      const response = await axios.post(
+        "http://localhost:8000/api/buy-pass",
+        data
       );
-      
-      const options = {
-        key: razorpayId,
-        amount: data.amount,
-        currency: data.currency,
-        name: "Event Registration",
-        description: `Registration for ${title}`,
-        order_id: data.id,
-        handler: function (response) {
-          Swal.fire({
-            icon: "success",
-            title: "Payment Successful!",
-            text: `Payment ID: ${response.razorpay_payment_id}`,
-            timer: 4000,
-          });
-        },
-        prefill: {
-          name: formData.name,
-          email: "",
-          contact: "",
-        },
-        notes: {
-          college: formData.college,
-          department: formData.department,
-          rollno: formData.rollno,
-        },
-        theme: {
-          color: "#0ea5e9",
-        },
-      };
+      console.log(data);
+      console.log(response.data);
+      if (response.status === 201) {
+        Swal.fire({
+          icon: "success",
+          title: "purchase successfully",
+          timer: 3000,
+        });
+      }
+      // const options = {
+      //   key: razorpayId,
+      //   amount: data.amount,
+      //   currency: data.currency,
+      //   name: "Event Registration",
+      //   description: `Registration for ${title}`,
+      //   order_id: data.id,
+      //   handler: function (response) {
+      //     Swal.fire({
+      //       icon: "success",
+      //       title: "Payment Successful!",
+      //       text: `Payment ID: ${response.razorpay_payment_id}`,
+      //       timer: 4000,
+      //     });
+      //   },
+      //   prefill: {
+      //     name: formData.name,
+      //     email: "",
+      //     contact: "",
+      //   },
+      //   notes: {
+      //     college: formData.college,
+      //     department: formData.department,
+      //     rollno: formData.rollno,
+      //   },
+      //   theme: {
+      //     color: "#0ea5e9",
+      //   },
+      // };
 
-      const rzp = new window.Razorpay(options);
-      rzp.open();
+      // const rzp = new window.Razorpay(options);
+      // rzp.open();
     } catch (err) {
       console.error(err);
       Swal.fire("Error", "Failed to create order", "error");
@@ -103,7 +112,7 @@ export function DemoCard({ title, imageUrl, price }) {
 
     setIsModalOpen(false);
     setFormData({
-      name: "",
+      email: "",
       rollno: "",
       college: "",
       department: "",
@@ -149,10 +158,10 @@ export function DemoCard({ title, imageUrl, price }) {
             </h2>
             <form onSubmit={handleFormSubmit} className="space-y-4">
               <input
-                type="text"
-                name="name"
-                placeholder="Name"
-                value={formData.name}
+                type="email"
+                name="email"
+                placeholder="Email"
+                value={formData.email}
                 onChange={handleInputChange}
                 className="w-full border rounded-lg p-2"
                 required
