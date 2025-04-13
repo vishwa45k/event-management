@@ -105,7 +105,7 @@ function TechnicalEvent() {
       try {
         const token = localStorage.getItem("token");
         await axios.post(
-          `${process.env.REACT_API_URL}api/add-events`,
+          `https://event-management-dhruva-production.up.railway.app/api/add-events`,
           eventData,
           {
             headers: {

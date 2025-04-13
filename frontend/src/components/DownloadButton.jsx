@@ -5,7 +5,7 @@ const DownloadButton = () => {
   const handleDownload = async () => {
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}api/download-excel-file`,
+        `https://event-management-dhruva-production.up.railway.app/api/download-excel-file`,
         {
           responseType: "blob",
         }

@@ -12,7 +12,7 @@ function PassDetails() {
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}api/get-purchase-list`
+        `https://event-management-dhruva-production.up.railway.app/api/get-purchase-list`
       );
       setData(response.data);
       console.log(response.data);

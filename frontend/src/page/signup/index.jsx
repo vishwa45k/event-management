@@ -44,7 +44,7 @@ const SignupPage = () => {
       console.log("Signup Data:", form);
       try {
         const response = await axios.post(
-          `${process.env.REACT_APP_API_URL}api/register`,
+          `https://event-management-dhruva-production.up.railway.app/api/register`,
           form
         );
 
