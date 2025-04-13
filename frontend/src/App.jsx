@@ -14,6 +14,8 @@ import StageType from "./components/StageType";
 import LoginPage from "./page/login";
 import SignupPage from "./page/signup";
 import ProtectedRoute from "./router/ProtectedRoute";
+import PurchaseTable from "./page/pass/PassTable";
+import PassDetails from "./page/pass";
 
 function App() {
   return (
@@ -79,6 +81,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route path="/pass-purchase" element={<PassDetails />} />
       </Routes>
     </>
   );

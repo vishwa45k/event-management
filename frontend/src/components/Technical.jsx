@@ -1,21 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 function TechnicalEvent() {
-  const [rules, setRules] = useState([]);
-
-  const [coordinators, setCoordinators] = useState([]);
-  const [studentCoordinators, setStudentCoordinators] = useState([]);
-  const [newCoordinator, setNewCoordinator] = useState({
-    name: "",
-    number: "",
-  });
-  const [newStudentCoordinator, setNewStudentCoordinator] = useState({
-    name: "",
-    number: "",
-  });
-  const [newRule, setNewRule] = useState("");
-
   const [newData, setData] = useState({
     departmentName: "",
     eventName: "",
@@ -24,313 +11,418 @@ function TechnicalEvent() {
     eventDescription: "",
     eventVenue: "",
     eventTime: "",
-    eventPrize: "",
-    date: new Date().getTime,
-    rules: [],
+    date: "",
   });
 
-  useEffect(() => {
-    const fetchDepartments = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const response = await axios.get("/api/departments", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setDepartmentList(response.data);
-      } catch (error) {
-        console.error("Error fetching departments:", error);
-      }
-    };
+  const [rules, setRules] = useState([]);
+  const [eventRounds, setEventRounds] = useState([]);
+  const [eventPrize, setEventPrize] = useState([]);
 
-    fetchDepartments();
-  }, []);
+  const [staffCoordinator, setStaffCoordinator] = useState({
+    name: "",
+    number: "",
+  });
+  const [studentCoordinators, setStudentCoordinators] = useState([]);
+  const [newStudentCoordinator, setNewStudentCoordinator] = useState({
+    name: "",
+    number: "",
+  });
 
-  // Handle input changes
+  const [newRule, setNewRule] = useState("");
+  const [newRound, setNewRound] = useState("");
+  const [newPrize, setNewPrize] = useState("");
+
   const handleData = (e) =>
     setData({ ...newData, [e.target.name]: e.target.value });
-  const handleCoordinatorChange = (e) =>
-    setNewCoordinator({ ...newCoordinator, [e.target.name]: e.target.value });
+
+  const handleStaffCoordinator = (e) =>
+    setStaffCoordinator({
+      ...staffCoordinator,
+      [e.target.name]: e.target.value,
+    });
+
   const handleStudentCoordinatorChange = (e) =>
     setNewStudentCoordinator({
       ...newStudentCoordinator,
       [e.target.name]: e.target.value,
     });
 
-  // Add coordinator
-  const addCoordinator = () => {
-    if (!newCoordinator.name || !newCoordinator.number)
-      return alert("Enter both name and number");
-    setCoordinators([...coordinators, newCoordinator]);
-    setNewCoordinator({ name: "", number: "" });
-  };
-
-  // Add student coordinator
   const addStudentCoordinator = () => {
-    if (!newStudentCoordinator.name || !newStudentCoordinator.number)
-      return alert("Enter both name and number");
+    if (!newStudentCoordinator.name || !newStudentCoordinator.number) return;
     setStudentCoordinators([...studentCoordinators, newStudentCoordinator]);
     setNewStudentCoordinator({ name: "", number: "" });
   };
 
-  // Add rule
-  const addRule = () => {
-    if (!newRule) return alert("Enter a rule");
-    setRules([...rules, newRule]);
-    setNewRule("");
-  };
-
-  // Handle form submission to add an event
-  const addEvent = async (e) => {
-    e.preventDefault();
-    const eventData = {
-      ...newData,
-      eventPrize: Number(newData.eventPrize),
-      rules,
-      coordinators,
-      studentCoordinators,
-    };
-
-    try {
-      const token = localStorage.getItem("token");
-      await axios.post("http://localhost:8000/api/add-events", eventData, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      console.log(eventData);
-    } catch (error) {
-      console.error(
-        "Error adding event:",
-        error.response?.data || error.message
-      );
-      alert("Failed to add event.");
+  const addItem = (type) => {
+    if (type === "rule" && newRule) {
+      setRules([...rules, newRule]);
+      setNewRule("");
+    } else if (type === "round" && newRound) {
+      setEventRounds([...eventRounds, newRound]);
+      setNewRound("");
+    } else if (type === "prize" && newPrize) {
+      setEventPrize([...eventPrize, newPrize]);
+      setNewPrize("");
     }
   };
 
+  const removeItem = (arraySetter, array, index) => {
+    const updated = [...array];
+    updated.splice(index, 1);
+    arraySetter(updated);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!staffCoordinator.name || !staffCoordinator.number) {
+      Swal.fire(
+        "Error!",
+        "Please fill in the Staff Coordinator's details",
+        "error"
+      );
+      return;
+    }
+
+    const eventData = {
+      ...newData,
+      eventPrize,
+      eventRules: rules,
+      eventRounds,
+      eventStaffCoordinator: staffCoordinator,
+      studentCoordinator: studentCoordinators,
+    };
+
+    const result = await Swal.fire({
+      title: "Confirm Submission",
+      text: "Do you want to add this event?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Yes, add it!",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        const token = localStorage.getItem("token");
+        await axios.post("http://localhost:8000/api/add-events", eventData, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        console.log(eventData);
+
+        Swal.fire("Success!", "Event added successfully", "success");
+
+        setData({
+          departmentName: "",
+          eventName: "",
+          type: "technical",
+          url: "",
+          eventDescription: "",
+          eventVenue: "",
+          eventTime: "",
+          date: "",
+        });
+        setRules([]);
+        setEventRounds([]);
+        setEventPrize([]);
+        setStaffCoordinator({ name: "", number: "" });
+        setStudentCoordinators([]);
+      } catch (error) {
+        Swal.fire("Error!", "Failed to add event", "error");
+      }
+    }
+  };
+
+  const Chip = ({ text, onRemove }) => (
+    <div className="bg-sky-100 text-sky-700 px-3 py-1 rounded-full flex items-center gap-2 text-sm">
+      {text}
+      <button
+        onClick={onRemove}
+        className="text-red-500 font-bold hover:text-red-700"
+      >
+        &times;
+      </button>
+    </div>
+  );
+
   return (
-    <div className="container mx-auto px-4 lg:px-16 pb-12 mt-10 font-sans">
-      <h1 className="text-sky-500 text-3xl text-center mb-6">
+    <div className="max-w-5xl mx-auto p-6">
+      <h1 className="text-3xl font-semibold text-center text-sky-600 mb-6">
         Add Technical Event
       </h1>
-      <form onSubmit={addEvent} className="space-y-6">
-        {/* Event Details */}
-        <fieldset className="border border-sky-400 rounded-lg p-4">
-          <legend className="text-lg font-semibold text-sky-600 px-2">
-            Event Details
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Event Info */}
+        <fieldset className="border border-sky-300 p-4 rounded-lg">
+          <legend className="text-lg text-sky-700 font-semibold px-2">
+            Event Information
           </legend>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
-            <div>
-              <label className="block font-medium">Department</label>
-              <select
-                name="departmentName"
-                value={newData.departmentName}
-                onChange={handleData}
-                className="w-full border border-sky-500 rounded p-2 text-sm"
-              >
-                <option value="">Select Department</option>
-                <option value="CSE">CSE</option>
-                <option value="IT">IT</option>
-                <option value="ECE">ECE</option>
-                <option value="EEE">EEE</option>
-                <option value="Mech">Mech</option>
-                <option value="Civil">Civil</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block font-medium">Event Name</label>
-              <input
-                type="text"
-                name="eventName"
-                value={newData.eventName}
-                onChange={handleData}
-                className="w-full border border-sky-500 rounded p-2 text-sm"
-              />
-            </div>
-
-            <div>
-              <label className="block font-medium">Event Type</label>
-              <select
-                name="type"
-                value={newData.type}
-                onChange={handleData}
-                className="w-full border border-sky-500 rounded p-2 text-sm"
-              >
-                <option value="technical">Technical</option>
-                <option value="non-technical">Non-Technical</option>
-                <option value="workshop">Workshop</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block font-medium">Image URL</label>
-              <input
-                type="text"
-                name="url"
-                value={newData.url}
-                onChange={handleData}
-                className="w-full border border-sky-500 rounded p-2 text-sm"
-              />
-            </div>
-
-            <div>
-              <label className="block font-medium">Description</label>
-              <input
-                type="text"
-                name="eventDescription"
-                value={newData.eventDescription}
-                onChange={handleData}
-                className="w-full border border-sky-500 rounded p-2 text-sm"
-              />
-            </div>
-
-            <div>
-              <label className="block font-medium">Event Location</label>
-              <input
-                type="text"
-                name="eventVenue"
-                value={newData.eventVenue}
-                onChange={handleData}
-                className="w-full border border-sky-500 rounded p-2 text-sm"
-              />
-            </div>
-
-            <div>
-              <label className="block font-medium">Date</label>
-              <input
-                type="date"
-                name="date"
-                value={newData.date}
-                onChange={handleData}
-                className="w-full border border-sky-500 rounded p-2 text-sm"
-              />
-            </div>
-
-            <div>
-              <label className="block font-medium">Time</label>
-              <input
-                type="time"
-                name="eventTime"
-                value={newData.eventTime}
-                onChange={handleData}
-                className="w-full border border-sky-500 rounded p-2 text-sm"
-              />
-            </div>
-
-            <div>
-              <label className="block font-medium">Price (₹)</label>
-              <input
-                type="number"
-                name="eventPrize"
-                value={newData.eventPrize}
-                onChange={handleData}
-                className="w-full border border-sky-500 rounded p-2 text-sm"
-              />
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+            <select
+              name="departmentName"
+              value={newData.departmentName}
+              onChange={handleData}
+              className="input"
+            >
+              <option value="" disabled>
+                Select Department
+              </option>
+              <option value="Artificial Intelligence and Data Science">
+                Artificial Intelligence and Data Science
+              </option>
+              <option value="Computer Science and Engineering">
+                Computer Science and Engineering
+              </option>
+              <option value="Information Technology">
+                Information Technology
+              </option>
+              <option value="Electronics and Communication Engineering">
+                Electronics and Communication Engineering
+              </option>
+              <option value="Electrical and Electronics Engineering">
+                Electrical and Electronics Engineering
+              </option>
+              <option value="Mechanical Engineering">
+                Mechanical Engineering
+              </option>
+              <option value="Civil Engineering">Civil Engineering</option>
+            </select>
+            <input
+              name="eventName"
+              placeholder="Event Name"
+              value={newData.eventName}
+              onChange={handleData}
+              className="input"
+            />
+            <select
+              name="type"
+              value={newData.type}
+              onChange={handleData}
+              className="input"
+            >
+              <option value="technical">Technical</option>
+              <option value="non-technical">Non-Technical</option>
+              <option value="workshop">Workshop</option>
+            </select>
+            <input
+              name="url"
+              placeholder="Poster URL"
+              value={newData.url}
+              onChange={handleData}
+              className="input"
+            />
+            <input
+              name="eventDescription"
+              placeholder="Description"
+              value={newData.eventDescription}
+              onChange={handleData}
+              className="input"
+            />
+            <input
+              name="eventVenue"
+              placeholder="Venue"
+              value={newData.eventVenue}
+              onChange={handleData}
+              className="input"
+            />
+            <input
+              name="date"
+              type="date"
+              value={newData.date}
+              onChange={handleData}
+              className="input"
+            />
+            <input
+              name="eventTime"
+              type="time"
+              value={newData.eventTime}
+              onChange={handleData}
+              className="input"
+            />
           </div>
         </fieldset>
 
-        {/* Event Rules */}
-        <fieldset className="border border-sky-400 rounded-lg p-4">
-          <legend className="text-lg font-semibold text-sky-600 px-2">
-            Event Rules
+        {/* Prize */}
+        <fieldset className="border border-sky-300 p-4 rounded-lg">
+          <legend className="text-lg text-sky-700 font-semibold px-2">
+            Prizes (₹)
           </legend>
-          <div className="flex flex-col gap-2 mt-2">
+          <div className="flex flex-wrap gap-2 mb-2">
+            {eventPrize.map((p, i) => (
+              <Chip
+                key={i}
+                text={p}
+                onRemove={() => removeItem(setEventPrize, eventPrize, i)}
+              />
+            ))}
+          </div>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={newPrize}
+              onChange={(e) => setNewPrize(e.target.value)}
+              className="input"
+              placeholder="Enter prize"
+            />
+            <button
+              type="button"
+              onClick={() => addItem("prize")}
+              className="btn"
+            >
+              Add
+            </button>
+          </div>
+        </fieldset>
+
+        {/* Rounds */}
+        <fieldset className="border border-sky-300 p-4 rounded-lg">
+          <legend className="text-lg text-sky-700 font-semibold px-2">
+            Event Rounds
+          </legend>
+          <div className="flex flex-wrap gap-2 mb-2">
+            {eventRounds.map((round, i) => (
+              <Chip
+                key={i}
+                text={round}
+                onRemove={() => removeItem(setEventRounds, eventRounds, i)}
+              />
+            ))}
+          </div>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={newRound}
+              onChange={(e) => setNewRound(e.target.value)}
+              className="input"
+              placeholder="Enter round"
+            />
+            <button
+              type="button"
+              onClick={() => addItem("round")}
+              className="btn"
+            >
+              Add
+            </button>
+          </div>
+        </fieldset>
+
+        {/* Rules */}
+        <fieldset className="border border-sky-300 p-4 rounded-lg">
+          <legend className="text-lg text-sky-700 font-semibold px-2">
+            Rules
+          </legend>
+          <div className="flex flex-wrap gap-2 mb-2">
+            {rules.map((rule, i) => (
+              <Chip
+                key={i}
+                text={rule}
+                onRemove={() => removeItem(setRules, rules, i)}
+              />
+            ))}
+          </div>
+          <div className="flex gap-2">
             <input
               type="text"
               value={newRule}
               onChange={(e) => setNewRule(e.target.value)}
+              className="input"
               placeholder="Enter rule"
-              className="border border-sky-500 p-2 rounded text-sm"
             />
             <button
               type="button"
-              onClick={addRule}
-              className="bg-sky-500 text-white p-2 rounded w-fit"
+              onClick={() => addItem("rule")}
+              className="btn"
             >
-              Add Rule
+              Add
             </button>
-            <ul className="list-disc ml-6">
-              {rules.map((rule, index) => (
-                <li key={index}>{rule}</li>
-              ))}
-            </ul>
           </div>
         </fieldset>
 
-        {/* Coordinators */}
-        <fieldset className="border border-sky-400 rounded-lg p-4">
-          <legend className="text-lg font-semibold text-sky-600 px-2">
-            Coordinators
+        {/* Staff Coordinator */}
+        <fieldset className="border border-sky-300 p-4 rounded-lg">
+          <legend className="text-lg text-sky-700 font-semibold px-2">
+            Staff Coordinator
           </legend>
-          <div className="grid md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-4">
             <input
               type="text"
               name="name"
-              value={newCoordinator.name}
-              onChange={handleCoordinatorChange}
-              placeholder="Coordinator Name"
-              className="w-full border border-sky-500 p-2 rounded text-sm"
+              placeholder="Name"
+              value={staffCoordinator.name}
+              onChange={handleStaffCoordinator}
+              className="input"
             />
             <input
               type="text"
               name="number"
-              value={newCoordinator.number}
-              onChange={handleCoordinatorChange}
-              placeholder="Coordinator Number"
-              className="w-full border border-sky-500 p-2 rounded text-sm"
+              placeholder="Contact Number"
+              value={staffCoordinator.number}
+              onChange={handleStaffCoordinator}
+              className="input"
             />
           </div>
-          <button
-            type="button"
-            onClick={addCoordinator}
-            className="bg-sky-500 text-white mt-2 p-2 rounded w-fit"
-          >
-            Add Coordinator
-          </button>
         </fieldset>
 
         {/* Student Coordinators */}
-        <fieldset className="border border-sky-400 rounded-lg p-4">
-          <legend className="text-lg font-semibold text-sky-600 px-2">
+        <fieldset className="border border-sky-300 p-4 rounded-lg">
+          <legend className="text-lg text-sky-700 font-semibold px-2">
             Student Coordinators
           </legend>
-          <div className="grid md:grid-cols-2 gap-4">
+          <div className="flex flex-wrap gap-2 mb-2">
+            {studentCoordinators.map((c, i) => (
+              <Chip
+                key={i}
+                text={`${c.name} (${c.number})`}
+                onRemove={() =>
+                  removeItem(setStudentCoordinators, studentCoordinators, i)
+                }
+              />
+            ))}
+          </div>
+          <div className="grid grid-cols-2 gap-2">
             <input
               type="text"
               name="name"
+              placeholder="Name"
               value={newStudentCoordinator.name}
               onChange={handleStudentCoordinatorChange}
-              placeholder="Student Coordinator Name"
-              className="w-full border border-sky-500 p-2 rounded text-sm"
+              className="input"
             />
             <input
               type="text"
               name="number"
+              placeholder="Number"
               value={newStudentCoordinator.number}
               onChange={handleStudentCoordinatorChange}
-              placeholder="Student Coordinator Number"
-              className="w-full border border-sky-500 p-2 rounded text-sm"
+              className="input"
             />
           </div>
           <button
             type="button"
             onClick={addStudentCoordinator}
-            className="bg-sky-500 text-white mt-2 p-2 rounded w-fit"
+            className="btn mt-2"
           >
             Add Student Coordinator
           </button>
         </fieldset>
 
-        {/* Submit Button */}
         <button
           type="submit"
-          className="bg-sky-600 hover:bg-sky-700 text-white py-3 px-6 rounded text-lg mt-4 w-full md:w-1/3 mx-auto block"
+          className="bg-sky-600 hover:bg-sky-700 text-white font-semibold py-2 px-6 rounded-lg w-full md:w-1/3 mx-auto block"
         >
-          Add Event
+          Submit Event
         </button>
       </form>
+
+      <style jsx>{`
+        .input {
+          @apply border border-sky-400 rounded p-2 w-full text-sm;
+        }
+        .btn {
+          @apply bg-sky-500 text-white px-4 py-2 rounded hover:bg-sky-600;
+        }
+      `}</style>
     </div>
   );
 }

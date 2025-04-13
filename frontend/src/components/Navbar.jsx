@@ -36,6 +36,10 @@ const Navbar = () => {
     { name: "Add Event", path: "/sports" },
     { name: "Add Stage", path: "/stage" },
     { name: "Delete Event", path: "/deleteevent", danger: true },
+    {
+      name: "pass",
+      path: "/pass-purchase",
+    },
   ];
 
   return (
@@ -68,7 +72,6 @@ const Navbar = () => {
             ))}
           </div>
 
-          {/* User Icon */}
           <div className="relative ml-4" ref={menuRef}>
             <button onClick={toggleUserMenu} className="focus:outline-none">
               <FaUserCircle size={28} className="text-white" />

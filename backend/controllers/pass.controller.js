@@ -1,6 +1,6 @@
 const passModel = require("../models/pass.model");
 const nodemailer = require("nodemailer");
-
+const excel = require("exceljs");
 const crypto = require("crypto");
 const sendMail = require("../middleware/mail.middleware");
 function generatePassId() {
@@ -53,4 +53,52 @@ const getPassOrders = async (req, res) => {
   }
 };
 
-module.exports = { buypass, getPassOrders };
+const exportPassList = async (req, res) => {
+  try {
+    const data = await passModel.find();
+
+    const workbook = new excel.Workbook();
+    const worksheet = workbook.addWorksheet("Pass Purchases");
+
+    worksheet.columns = [
+      { header: "#", key: "index", width: 10 },
+      { header: "Email", key: "email", width: 30 },
+      { header: "College", key: "college", width: 30 },
+      { header: "Department", key: "department", width: 20 },
+      { header: "Pass", key: "passName", width: 20 },
+      { header: "Pass Count", key: "passCount", width: 15 },
+      { header: "Roll No", key: "rollNo", width: 20 },
+      { header: "Pass ID", key: "passId", width: 20 },
+    ];
+
+    data.forEach((item, index) => {
+      worksheet.addRow({
+        index: index + 1,
+        email: item.email,
+        college: item.college,
+        department: item.department,
+        passName: item.passName,
+        passCount: item.passCount,
+        rollNo: item.rollNo,
+        passId: item.passId ? item.passId : "N/A",
+      });
+    });
+
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    );
+    res.setHeader(
+      "Content-Disposition",
+      "attachment; filename=pass-purchases.xlsx"
+    );
+
+    await workbook.xlsx.write(res);
+    res.end();
+  } catch (error) {
+    console.error("Error exporting data to Excel:", error);
+    res.status(500).send("Error exporting data.");
+  }
+};
+
+module.exports = { buypass, getPassOrders, exportPassList };
