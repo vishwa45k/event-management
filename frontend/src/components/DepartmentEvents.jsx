@@ -20,7 +20,7 @@ function DepartmentEvents() {
       console.log("Token:", token);
 
       const response = await axios.get(
-        `${process.env.REACT_API_URL}api/events/${name}`,
+        `${process.env.REACT_APP_API_URL}api/events/${name}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -69,7 +69,7 @@ function DepartmentEvents() {
     try {
       const token = localStorage.getItem("token");
       await axios.put(
-        `${process.env.REACT_API_URL}api/events/${formData._id}`,
+        `${process.env.REACT_APP_API_URL}api/events/${formData._id}`,
         formData,
         {
           headers: {
@@ -77,7 +77,7 @@ function DepartmentEvents() {
           },
         }
       );
-      console.log(`${process.env.REACT_API_URL}api/events/${formData._id}`);
+      console.log(`${process.env.REACT_APP_API_URL}api/events/${formData._id}`);
       console.log(formData);
       console.log(formData._id);
 
@@ -98,7 +98,7 @@ function DepartmentEvents() {
     try {
       const token = localStorage.getItem("token");
 
-      await axios.delete(`${process.env.REACT_API_URL}api/events/${id}`, {
+      await axios.delete(`${process.env.REACT_APP_API_URL}api/events/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

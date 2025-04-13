@@ -5,7 +5,7 @@ const DownloadButton = () => {
   const handleDownload = async () => {
     try {
       const response = await axios.get(
-        `${process.env.REACT_API_URL}api/download-excel-file`,
+        `${process.env.REACT_APP_API_URL}api/download-excel-file`,
         {
           responseType: "blob",
         }
@@ -31,6 +31,7 @@ const DownloadButton = () => {
   return (
     <button
       onClick={handleDownload}
+
       className="bg-sky-400 text-white px-4 py-2 rounded shadow hover:bg-sky-700"
     >
       Download Excel

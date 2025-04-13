@@ -58,7 +58,7 @@ const LoginPage = () => {
 
     try {
       const response = await axios.post(
-        `${process.env.REACT_API_URL}api/signin`,
+        `${process.env.REACT_APP_API_URL}api/signin`,
         form
       );
       login(response.data);

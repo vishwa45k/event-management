@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
 const SignupPage = () => {
-  // Form state
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -12,18 +11,15 @@ const SignupPage = () => {
     role: "",
   });
 
-  // Error state
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
-  // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm({ ...form, [name]: value }); // update form data
-    setErrors({ ...errors, [name]: "" }); // clear error on input
+    setForm({ ...form, [name]: value });
+    setErrors({ ...errors, [name]: "" });
   };
 
-  // Validation function
   const validate = () => {
     const newErrors = {};
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -48,9 +44,10 @@ const SignupPage = () => {
       console.log("Signup Data:", form);
       try {
         const response = await axios.post(
-          `${process.env.REACT_API_URL}api/register`,
+          `${process.env.REACT_APP_API_URL}api/register`,
           form
         );
+
         console.log(response.data);
         console.log("User signed up successfully");
         setForm({
@@ -64,7 +61,7 @@ const SignupPage = () => {
       } catch (error) {
         console.log("Error:", error.message);
 
-        if (errorsteve1234.response && error.response.status === 409) {
+        if (error.response.status === 409) {
           Swal.fire({
             icon: "error",
             title: "Error Occurred",
