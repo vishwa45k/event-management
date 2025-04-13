@@ -104,12 +104,16 @@ function TechnicalEvent() {
     if (result.isConfirmed) {
       try {
         const token = localStorage.getItem("token");
-        await axios.post("http://localhost:8000/api/add-events", eventData, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        await axios.post(
+          `${process.env.REACT_API_URL}api/add-events`,
+          eventData,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         console.log(eventData);
 
         Swal.fire("Success!", "Event added successfully", "success");

@@ -48,7 +48,7 @@ const SignupPage = () => {
       console.log("Signup Data:", form);
       try {
         const response = await axios.post(
-          "http://localhost:8000/api/register",
+          `${process.env.REACT_API_URL}api/register`,
           form
         );
         console.log(response.data);
@@ -59,7 +59,7 @@ const SignupPage = () => {
           password: "",
           role: "",
         });
-        
+
         navigate("/login");
       } catch (error) {
         console.log("Error:", error.message);

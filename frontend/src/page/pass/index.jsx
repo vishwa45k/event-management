@@ -12,7 +12,7 @@ function PassDetails() {
   const fetchData = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:8000/api/get-purchase-list"
+        `${process.env.REACT_API_URL}api/get-purchase-list`
       );
       setData(response.data);
       console.log(response.data);
