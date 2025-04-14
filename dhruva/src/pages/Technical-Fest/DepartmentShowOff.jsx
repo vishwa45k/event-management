@@ -9,9 +9,8 @@ function DepartmentShowOff() {
   useEffect(() => {
     const fetchDepartment = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:8000/api/get-events"
-        );
+        const api = import.meta.env.VITE_APP_API;
+        const response = await axios.get(`${api}api/get-events`);
         setDepartment(response.data);
       } catch (error) {
         console.log(error.message);

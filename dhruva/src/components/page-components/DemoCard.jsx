@@ -60,10 +60,9 @@ export function DemoCard({ title, imageUrl, price }) {
     };
 
     try {
-      const response = await axios.post(
-        "http://localhost:8000/api/buy-pass",
-        data
-      );
+      const api = import.meta.env.VITE_APP_API;
+
+      const response = await axios.post(`${api}api/buy-pass`, data);
       console.log(data);
       console.log(response.data);
       if (response.status === 201) {

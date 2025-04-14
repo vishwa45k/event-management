@@ -109,7 +109,6 @@ function DepartmentEvents() {
         }
       );
 
-      // Refresh events after successful deletion
       fetchEvents();
 
       Swal.fire({

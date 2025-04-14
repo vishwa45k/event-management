@@ -21,8 +21,10 @@ function EventShowPage() {
   }, []);
   const fetchDepartmentData = async () => {
     try {
+      const api = import.meta.env.VITE_APP_API;
+
       const response = await axios.get(
-        `http://localhost:8000/api/get-events/${eventId}`
+        `${api}apittp://localhost:8000/api//get-events/${eventId}`
       );
       console.log(`http://localhost:8000/api/get-events/${eventId}`);
       setData(response.data.event);
