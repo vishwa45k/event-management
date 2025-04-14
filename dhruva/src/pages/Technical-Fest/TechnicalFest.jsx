@@ -31,7 +31,7 @@ function TechnicalFest() {
         </p>
       </motion.div>
       <DepartmentShowOff />
-      <Sponsors/>
+      {/* <Sponsors/> */}
       <Banners/>
     </div>
   );

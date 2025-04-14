@@ -23,9 +23,7 @@ function EventShowPage() {
     try {
       const api = import.meta.env.VITE_APP_API;
 
-      const response = await axios.get(
-        `${api}apittp://localhost:8000/api//get-events/${eventId}`
-      );
+      const response = await axios.get(`${api}api//get-events/${eventId}`);
       console.log(`http://localhost:8000/api/get-events/${eventId}`);
       setData(response.data.event);
     } catch (error) {
