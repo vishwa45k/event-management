@@ -39,7 +39,6 @@ function SportscardDetails() {
     setSportsList([...SportsList, { ...newData, rules }]);
     alert("Sport added");
 
-    // Reset form and rules
     setData({
       sportname: "",
       url: "",
@@ -52,7 +51,7 @@ function SportscardDetails() {
       price: "",
       rules: [],
     });
-    setRules([]); // Reset rules separately
+    setRules([]);
   };
 
   return (
