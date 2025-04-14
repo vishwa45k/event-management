@@ -9,7 +9,7 @@ import AppNavigation from "./router/AppNavigation";
 import "./assets/fonts/allfonts.css";
 
 function App() {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     Aos.init();
   });

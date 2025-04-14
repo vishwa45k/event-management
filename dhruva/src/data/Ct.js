@@ -1,16 +1,5 @@
 const ct = {
-  id: 13,
-  shortName: "CT",
-  technicalEventCount: 3,
-  nonTechnicalEventCount: 1,
-  workshop: 2,
   departmentName: "Department Of Computer Science and Technology",
-  cardName: "Computer Science and Technology",
-  departmentDescription:
-    "The Department of Computer Science and Technology is excited to announce its upcoming lineup of events for the upcoming academic year. We will be conducting 3 technical events, 1 non-technical events, and 1 workshops that are sure to be informative and engaging for students, faculty, and industry professionals alike.",
-  coordinatorName: "N.Vijayakumar / Assistant Professor ",
-  coordinatorContactPhone: "9566332636",
-  coordinatorEmail: "Vijayakumar.n@kce.ac.in",
   events: [
     {
       posterUrl: "",

@@ -3,31 +3,22 @@ import { useLocation, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import EventShowOff from "./EventShowOff";
 import TestCard from "@/components/page-components/TestCard";
-import departmentDataList from "@/data/Departments";
 import "../../assets/fonts/powergrotesk.css";
 
 function EventPage() {
-  const params = useParams();
-  const departmentName = params?.departmentName || "";
   const location = useLocation();
-  const [departmentData, setDepartmentData] = useState(null);
+  const [department, setDepartment] = useState(null);
+  const [events, setEvents] = useState([]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    const data = location.state.events;
+    console.log(data.events);
+    setDepartment(data);
+    setEvents(data.events);
+  }, []);
 
-    let department = location.state?.events;
-
-    if (!department) {
-      department = departmentDataList.find(
-        (dept) =>
-          dept.shortName?.toLowerCase() === departmentName?.toLowerCase()
-      );
-    }
-
-    setDepartmentData(department || null);
-  }, [departmentName, location.state]);
-
-  if (!departmentData) {
+  if (!department) {
     return (
       <div className="text-center text-red-500 text-2xl pt-20">
         Department not found!
@@ -44,21 +35,18 @@ function EventPage() {
         transition={{ duration: 0.8, ease: "easeOut" }}
       >
         <h1 className="text-3xl sm:text-5xl lg:text-6xl  tracking-wide powergrok bg-gradient-to-r text-black bg-clip-text">
-          {departmentData.departmentName}
+          {department.departmentName}
         </h1>
-        <p className="mt-4 dm-sans text-lg text-justify text-gray-600 dark:text-gray-300 max-w-7xl mx-auto leading-relaxed">
-          {departmentData.departmentDescription}
-        </p>
       </motion.div>
 
-      {departmentData.events && (
+      {events && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.3 }}
         >
-          <EventShowOff events={departmentData.events} />
+          <EventShowOff events={events} />
         </motion.div>
       )}
 
@@ -68,7 +56,7 @@ function EventPage() {
         transition={{ duration: 1, delay: 0.5 }}
       >
         <div className="flex justify-center mb-6">
-          <TestCard deptDetails={departmentData} />
+          <TestCard deptDetails={department} />
         </div>
       </motion.div>
     </div>

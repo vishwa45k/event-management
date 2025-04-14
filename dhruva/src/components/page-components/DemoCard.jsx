@@ -1,85 +1,222 @@
-import { useNavigate } from "react-router-dom";
-// import Swal from "sweetalert2";
+import department from "@/data/Departments";
+import axios from "axios";
+import { useState, useEffect } from "react";
+import Swal from "sweetalert2";
 
-export function DemoCard({ title, description, imageUrl, link ,descLink}) {
-  const navigate = useNavigate();
+export function DemoCard({ title, imageUrl, price }) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleNavigation = () => {
-    if (!link) {
-      Swal.fire({
-        title: "Stay Tuned!",
-        html: `<p style="font-weight:normal" st>Registration will open soon. For further details  <br> <br>
-               Contact :<a href="tel:9385581203" >+91 93855 81203</a></p>`,
-        confirmButtonColor: "green",
-        confirmButtonText: "Ok",
-      });
-      
-      return;
-    }
+  const [formData, setFormData] = useState({
+    email: "",
+    rollno: "",
+    college: "",
+    department: "",
+    passCount: 1,
+  });
 
-    if (link.startsWith("http")) {
-      window.open(link, "_blank");
-    } else {
-      navigate(link);
-    }
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: name === "passCount" ? parseInt(value) : value,
+    }));
   };
-  const handleNavigationDesc = () => {
-    navigate(descLink);
-  }
+
+  // const loadRazorpayScript = () => {
+  //   return new Promise((resolve) => {
+  //     const script = document.createElement("script");
+  //     script.src = "https://checkout.razorpay.com/v1/checkout.js";
+  //     script.onload = () => {
+  //       resolve(true);
+  //     };
+  //     script.onerror = () => {
+  //       resolve(false);
+  //     };
+  //     document.body.appendChild(script);
+  //   });
+  // };
+
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+    const totalAmount = formData.passCount * price;
+    // const razorpayId = import.meta.env.VITE_RAZORPAY_KEY;
+    // const res = await loadRazorpayScript();
+    // if (!res) {
+    //   Swal.fire({
+    //     icon: "error",
+    //   });
+    //   return;
+    // }
+    const data = {
+      amount: totalAmount,
+      currency: "INR",
+      email: formData.email,
+      department: formData.department,
+      college: formData.college,
+      passCount: formData.passCount,
+      rollNo: formData.rollno,
+      cardTitle: title,
+    };
+
+    try {
+      const api = import.meta.env.VITE_APP_API;
+
+      const response = await axios.post(`${api}api/buy-pass`, data);
+      console.log(data);
+      console.log(response.data);
+      if (response.status === 201) {
+        Swal.fire({
+          icon: "success",
+          title: "purchase successfully",
+          timer: 3000,
+        });
+      }
+      // const options = {
+      //   key: razorpayId,
+      //   amount: data.amount,
+      //   currency: data.currency,
+      //   name: "Event Registration",
+      //   description: `Registration for ${title}`,
+      //   order_id: data.id,
+      //   handler: function (response) {
+      //     Swal.fire({
+      //       icon: "success",
+      //       title: "Payment Successful!",
+      //       text: `Payment ID: ${response.razorpay_payment_id}`,
+      //       timer: 4000,
+      //     });
+      //   },
+      //   prefill: {
+      //     name: formData.name,
+      //     email: "",
+      //     contact: "",
+      //   },
+      //   notes: {
+      //     college: formData.college,
+      //     department: formData.department,
+      //     rollno: formData.rollno,
+      //   },
+      //   theme: {
+      //     color: "#0ea5e9",
+      //   },
+      // };
+
+      // const rzp = new window.Razorpay(options);
+      // rzp.open();
+    } catch (err) {
+      console.error(err);
+      Swal.fire("Error", "Failed to create order", "error");
+    }
+
+    setIsModalOpen(false);
+    setFormData({
+      email: "",
+      rollno: "",
+      college: "",
+      department: "",
+      passCount: 1,
+    });
+  };
 
   return (
-    <div className="flex justify-center">
-      <div className="w-full max-w-sm sm:max-w-xs">
-        <div className="group w-full cursor-pointer bg-black overflow-hidden relative h-80 md:h-72 lg:h-96 rounded-xl shadow-xl mx-auto flex flex-col p-4 border border-2 transition-all duration-500">
-        
-          <div
-            className="absolute inset-0 bg-cover bg-center opacity-60"
-            style={{ backgroundImage: `url(${imageUrl})` }}
-          ></div>
-
-          <div className="relative z-10 text-center p-4 flex flex-col justify-between h-full">
-            <div>
-              <h1 className="font-bold text-2xl md:text-2xl lg:text-3xl text-white">
-                {title}
-              </h1>
-            </div>
-              
-
-            <div className="mt-auto relative z-10">
-              <button
-                  onClick={handleNavigationDesc}
-                  className="h-12 w-full animate-shimmer mb-1 items-center justify-center rounded-full border border-sky-800 bg-[linear-gradient(110deg,#0284c7,45%,#0ea5e9,55%,#0284c7)] bg-[length:200%_100%] px-2 font-medium text-white transition-colors focus:outline-none focus:ring-2 focus:ring-sky-400 focus:ring-offset-2 focus:ring-offset-sky-50"
+    <>
+      <div className="flex justify-center">
+        <div className="w-full max-w-sm">
+          <div className="bg-black h-80 rounded-xl relative overflow-hidden shadow-xl p-4">
+            <div
+              className="absolute inset-0 bg-cover bg-center opacity-60"
+              style={{ backgroundImage: `url(${imageUrl})` }}
+            />
+            <div className="relative z-10 text-white text-center flex flex-col justify-between h-full">
+              <h1 className="text-2xl font-bold">{title}</h1>
+              <div>
+                <button
+                  onClick={() => setIsModalOpen(true)}
+                  className="w-full mt-4 bg-sky-500 hover:bg-sky-600 text-white rounded-lg py-2 transition"
                 >
-                  View Details
-              </button>
-              <button
-                onClick={handleNavigation}
-                className="h-12 w-full animate-shimmer items-center justify-center rounded-full border border-sky-800 bg-[linear-gradient(110deg,#0284c7,45%,#0ea5e9,55%,#0284c7)] bg-[length:200%_100%] px-2 font-medium text-white transition-colors focus:outline-none focus:ring-2 focus:ring-sky-400 focus:ring-offset-2 focus:ring-offset-sky-50"
-              >
-                Register Now
-              </button>
+                  Register Now
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  );
-}
 
-export default function DemoGrid({ cards }) {
-  return (
-    <div className="flex justify-center items-center min-h-screen">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-4 w-full max-w-6xl place-items-center">
-        {cards.map((card, index) => (
-          <DemoCard
-            key={index}
-            title={card.title}
-            description={card.description}
-            imageUrl={card.imageUrl}
-            link={card.link}
-          />
-        ))}
-      </div>
-    </div>
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-70 flex items-center justify-center">
+          <div className="bg-white rounded-xl p-6 max-w-md w-full relative">
+            <button
+              onClick={() => setIsModalOpen(false)}
+              className="absolute top-2 right-2 text-xl text-gray-600 hover:text-red-500"
+            >
+              &times;
+            </button>
+            <h2 className="text-2xl font-semibold text-center text-sky-700 mb-4">
+              Register
+            </h2>
+            <form onSubmit={handleFormSubmit} className="space-y-4">
+              <input
+                type="email"
+                name="email"
+                placeholder="Email"
+                value={formData.email}
+                onChange={handleInputChange}
+                className="w-full border rounded-lg p-2"
+                required
+              />
+              <input
+                type="text"
+                name="rollno"
+                placeholder="Roll Number"
+                value={formData.rollno}
+                onChange={handleInputChange}
+                className="w-full border rounded-lg p-2"
+                required
+              />
+              <input
+                type="text"
+                name="college"
+                placeholder="College"
+                value={formData.college}
+                onChange={handleInputChange}
+                className="w-full border rounded-lg p-2"
+                required
+              />
+              <select
+                name="department"
+                value={formData.department}
+                onChange={handleInputChange}
+                className="w-full border rounded-lg p-2"
+                required
+              >
+                <option value="">Select Department</option>
+                <option value="CSE">CSE</option>
+                <option value="ECE">ECE</option>
+                <option value="EEE">EEE</option>
+                <option value="IT">IT</option>
+                <option value="MECH">MECH</option>
+              </select>
+              <input
+                type="number"
+                name="passCount"
+                min="1"
+                max="3"
+                value={formData.passCount}
+                onChange={handleInputChange}
+                className="w-full border rounded-lg p-2"
+                required
+              />
+              <button
+                type="submit"
+                className="w-full bg-sky-500 hover:bg-sky-600 text-white p-2 rounded-lg"
+              >
+                Pay ₹{formData.passCount * price}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+    </>
   );
 }

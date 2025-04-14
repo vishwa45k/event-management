@@ -25,7 +25,9 @@ function DepartmentCard({ events }) {
     if (count > 0) {
       return (
         <div className="flex items-center gap-3 sm:gap-4">
-          <div className={`p-2 rounded-full group-hover:bg-white transition-all duration-300 ${bgColor}`}>
+          <div
+            className={`p-2 rounded-full group-hover:bg-white transition-all duration-300 ${bgColor}`}
+          >
             {React.cloneElement(icon, {
               className: `w-4 h-4 sm:w-5 sm:h-5 ${textColor} transition-all duration-300 group-hover:rotate-12`,
             })}
@@ -39,6 +41,28 @@ function DepartmentCard({ events }) {
     return null;
   };
 
+  let technicalCount = 0;
+  let nontechnicalCount = 0;
+  let workshopCount = 0;
+
+  if (Array.isArray(events.events)) {
+    events.events.forEach((eve) => {
+      const type = eve.eventType?.toLowerCase();
+
+      switch (type) {
+        case "technical":
+          technicalCount++;
+          break;
+        case "non-technical":
+          nontechnicalCount++;
+          break;
+        case "workshop":
+          workshopCount++;
+          break;
+      }
+    });
+  }
+
   return (
     <div className="relative group hover:scale-105 transition-transform duration-300 w-full max-w-sm sm:max-w-md mx-auto">
       <div className="absolute inset-0 overflow-hidden rounded-lg">
@@ -50,7 +74,7 @@ function DepartmentCard({ events }) {
         <CardHeader className="p-4 sm:p-6">
           <div className="flex items-center justify-between">
             <h2 className="text-md sm:text-xl powergrok text-black dark:text-white transition-all duration-300">
-              {events.cardName}
+              {events.departmentName}
             </h2>
             <div className="p-2 bg-blue-100 dark:bg-blue-900 rounded-full group-hover:bg-white transition-all duration-300">
               <Laptop className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 dark:text-blue-300 transition-all duration-300 group-hover:rotate-180" />
@@ -62,17 +86,40 @@ function DepartmentCard({ events }) {
 
         <CardContent className="p-4 sm:p-6 dm-sans text-sm sm:text-lg flex-grow">
           <div className="space-y-3 sm:space-y-4">
-            {renderEventCount(events.workshop, events.workshop === 1 ? "Workshop" : "Workshops", <Settings />, "bg-blue-100 dark:bg-blue-900", "text-blue-600 dark:text-blue-300")}
-            {renderEventCount(events.technicalEventCount, events.technicalEventCount === 1 ? "Technical Event" : "Technical Events", <LaptopMinimal />, "bg-purple-100 dark:bg-purple-900", "text-purple-600 dark:text-purple-300")}
-            {renderEventCount(events.nonTechnicalEventCount, events.nonTechnicalEventCount === 1 ? "Non-Technical Event" : "Non-Technical Events", <Calendar />, "bg-orange-100 dark:bg-orange-900", "text-orange-600 dark:text-orange-300")}
+            {renderEventCount(
+              workshopCount,
+              workshopCount === 1 ? "Workshop" : "Workshops",
+              <Settings />,
+              "bg-blue-100 dark:bg-blue-900",
+              "text-blue-600 dark:text-blue-300"
+            )}
+            {renderEventCount(
+              technicalCount,
+              technicalCount === 1 ? "Technical Event" : "Technical Events",
+              <LaptopMinimal />,
+              "bg-purple-100 dark:bg-purple-900",
+              "text-purple-600 dark:text-purple-300"
+            )}
+            {renderEventCount(
+              nontechnicalCount,
+              nontechnicalCount === 1
+                ? "Non-Technical Event"
+                : "Non-Technical Events",
+              <Calendar />,
+              "bg-orange-100 dark:bg-orange-900",
+              "text-orange-600 dark:text-orange-300"
+            )}
           </div>
         </CardContent>
 
         <CardFooter className="p-4 sm:p-6 mt-auto flex justify-center">
-          <Button className="bg-sky-400 w-40 dm-sans text-white text-lg rounded-full transition-all duration-500 shadow-md hover:shadow-xl group-hover:bg-white group-hover:text-black hover:scale-105"
+          <Button
+            className="bg-sky-400 w-40 dm-sans text-white text-lg rounded-full transition-all duration-500 shadow-md hover:shadow-xl group-hover:bg-white group-hover:text-black hover:scale-105"
             onClick={handleNavigation}
-            aria-label="Explore department">
-            Explore <Rocket className="group-hover:rotate-45 transition-transform duration-300" />
+            aria-label="Explore department"
+          >
+            Explore{" "}
+            <Rocket className="group-hover:rotate-45 transition-transform duration-300" />
           </Button>
         </CardFooter>
       </Card>

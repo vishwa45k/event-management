@@ -4,14 +4,12 @@ import { motion } from "framer-motion";
 import "../../assets/fonts/powergrotesk.css";
 import Sponsors from "../home/section/Sponsors";
 import Banners from "@/components/page-components/Banners";
-// import GlobeBackground from "@/components/page-components/GlobeBackground";
 function TechnicalFest() {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
   return (
     <div>
-      {/* <GlobeBackground /> */}
       <motion.div
         className="mt-20 md:mt-28 container  mx-auto px-6 sm:px-12 text-center max-w-7xl"
         initial={{ opacity: 0, scale: 0.95 }}
@@ -33,7 +31,7 @@ function TechnicalFest() {
         </p>
       </motion.div>
       <DepartmentShowOff />
-      <Sponsors/>
+      {/* <Sponsors/> */}
       <Banners/>
     </div>
   );

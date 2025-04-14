@@ -2,7 +2,7 @@ const express = require("express");
 const Event = require("../models/models.js");
 const router = express.Router();
 
-router.post("/events", async (req, res) => {
+router.post("/add-event", async (req, res) => {
   try {
     const {
       departmentName,
@@ -72,6 +72,18 @@ router.get("/departments", async (req, res) => {
   } catch (error) {
     console.error("Error fetching departments:", error.message);
     res.status(500).json({ error: error.message });
+  }
+});
+
+router.get("/department", async (req, res) => {
+  try {
+    const department = await Event.find();
+    if (department.length === 0) {
+      return res.status(200).json({ message: "No Departments avaiable" });
+    }
+    return res.status(200).json(department);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
   }
 });
 
