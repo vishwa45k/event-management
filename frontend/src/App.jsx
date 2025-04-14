@@ -95,7 +95,7 @@ const Home = () => {
     <div className="text-center text-xl">
       {/* Welcome {storedUser?.name || "Guest"} */}
       <DepartmentCard />
-      <StageEvent />
+      {/* <StageEvent /> */}
     </div>
   );
 };
