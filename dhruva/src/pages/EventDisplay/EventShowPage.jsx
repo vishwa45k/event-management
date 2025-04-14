@@ -6,7 +6,6 @@ import "../../assets/fonts/opensans.css";
 import "../../assets/fonts/sourcesans.css";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import CoordinatorCard from "@/components/page-components/CoordinatorCard";
-import backgroundGif from "../../assets/gif/card-background.webp";
 import axios from "axios";
 
 function EventShowPage() {
@@ -24,7 +23,6 @@ function EventShowPage() {
       const api = import.meta.env.VITE_APP_API;
 
       const response = await axios.get(`${api}api//get-events/${eventId}`);
-      console.log(`http://localhost:8000/api/get-events/${eventId}`);
       setData(response.data.event);
     } catch (error) {
       console.log(error.message);
@@ -46,9 +44,9 @@ function EventShowPage() {
 
   return (
     <div
-      className="md:mt-20 mt-10 min-h-screen flex justify-center items-start p-6 md:p-8 w-full"
+      className="md:mt-20 mt-10 min-h-screen bg-sky-300 flex justify-center items-start p-6 md:p-8 w-full"
       style={{
-        backgroundImage: `url(${backgroundGif})`,
+       
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
