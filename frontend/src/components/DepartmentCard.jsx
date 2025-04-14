@@ -9,11 +9,14 @@ function DepartmentCard() {
   useEffect(() => {
     const token = localStorage.getItem("token");
     axios
-      .get("http://localhost:8000/api/get-events", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
+      .get(
+        "https://event-management-dhruva-production.up.railway.app/api/get-events",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
       .then((response) => {
         setDepartments(response.data);
       })
