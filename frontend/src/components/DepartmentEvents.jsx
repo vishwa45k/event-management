@@ -77,7 +77,9 @@ function DepartmentEvents() {
           },
         }
       );
-      console.log(`https://event-management-dhruva-production.up.railway.app/api/events/${formData._id}`);
+      console.log(
+        `https://event-management-dhruva-production.up.railway.app/api/events/${formData._id}`
+      );
       console.log(formData);
       console.log(formData._id);
 
@@ -98,23 +100,45 @@ function DepartmentEvents() {
     try {
       const token = localStorage.getItem("token");
 
-      await axios.delete(`https://event-management-dhruva-production.up.railway.app/api/events/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await axios.delete(
+        `https://event-management-dhruva-production.up.railway.app/api/events/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      // Refresh events after successful deletion
       fetchEvents();
+
       Swal.fire({
         icon: "success",
-        title: "event removed",
+        title: "Event removed successfully",
         timer: 2000,
+        showConfirmButton: false,
       });
     } catch (error) {
       console.error("Error deleting event:", error);
-      Swal.fire({
-        icon: "error",
-        title: "error Occurred",
-      });
+
+      // Handle 403 or unauthorized error
+      if (error.response && error.response.status === 403) {
+        Swal.fire({
+          icon: "error",
+          title: "Access Denied",
+          text: "You don't have permission to delete this event.",
+          timer: 3000,
+          showConfirmButton: false,
+        });
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Error Occurred",
+          text: error.response?.data?.message || "Something went wrong.",
+          timer: 3000,
+          showConfirmButton: false,
+        });
+      }
     }
   };
 
