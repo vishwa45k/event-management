@@ -15,7 +15,7 @@ function PassDetails() {
   const fetchAllData = async () => {
     setLoading(true);
     try {
-      const response = await axios.post(
+      const response = await axios.get(
         `https://event-management-dhruva-production.up.railway.app/api/get-purchase-list`
       );
       setData(response.data);
@@ -29,6 +29,7 @@ function PassDetails() {
 
   const handleSearch = async (e) => {
     e.preventDefault();
+
     if (!email.trim()) {
       fetchAllData();
       return;
@@ -37,7 +38,7 @@ function PassDetails() {
     setLoading(true);
     try {
       const response = await axios.post(
-        `http://localhost:8000/api/get-email-pass`,
+        `https://event-management-dhruva-production.up.railway.app/api/get-email-pass`,
         { email }
       );
       setData(response.data);
@@ -54,23 +55,24 @@ function PassDetails() {
       <h1 className="text-center text-2xl font-bold my-4">Pass Purchases</h1>
 
       {/* Search Bar */}
-      <div className="flex items-center justify-center mb-4">
-        <form onSubmit={handleSearch} className="flex gap-2 w-full max-w-xl">
-          <input
-            type="email"
-            placeholder="Enter email to search"
-            className="border border-gray-300 rounded px-4 py-2 w-full"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <button
-            type="submit"
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-          >
-            Search
-          </button>
-        </form>
-      </div>
+      <form
+        onSubmit={handleSearch}
+        className="flex items-center justify-center gap-2 mb-4"
+      >
+        <input
+          type="email"
+          placeholder="Enter email to search"
+          className="border border-gray-300 rounded px-4 py-2 w-full max-w-md"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <button
+          type="submit"
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        >
+          Search
+        </button>
+      </form>
 
       {loading ? (
         <p className="text-center text-gray-500">Loading...</p>
