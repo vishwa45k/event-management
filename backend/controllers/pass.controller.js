@@ -53,6 +53,22 @@ const getPassOrders = async (req, res) => {
   }
 };
 
+const getPassEmail = async (req, res) => {
+  const email = req.body;
+  try {
+    const emailFound = passModel.find({ email: email });
+    if (emailFound) {
+      return res.status(404).json({ message: "no purchase history" });
+    }
+    return res.status(200).json({
+      message: `${emailFound.length} founded `,
+      details: emailFound,
+    });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 const exportPassList = async (req, res) => {
   try {
     const data = await passModel.find();
@@ -101,4 +117,4 @@ const exportPassList = async (req, res) => {
   }
 };
 
-module.exports = { buypass, getPassOrders, exportPassList };
+module.exports = { buypass, getPassOrders, exportPassList, getPassEmail };
