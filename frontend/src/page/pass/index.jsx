@@ -7,7 +7,6 @@ function PassDetails() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Fetch all purchase data on mount
   useEffect(() => {
     fetchAllData();
   }, []);
@@ -54,7 +53,6 @@ function PassDetails() {
     <div className="max-w-4xl mx-auto px-4">
       <h1 className="text-center text-2xl font-bold my-4">Pass Purchases</h1>
 
-      {/* Search Bar */}
       <form
         onSubmit={handleSearch}
         className="flex items-center justify-center gap-2 mb-4"
